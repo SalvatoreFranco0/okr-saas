@@ -35,3 +35,5 @@ docs/        piano, decisioni, documentazione di architettura
 
 ## Regole
 Migrazioni SQL scritte a mano in `supabase/migrations/`; prod si modifica solo via GitHub Actions con approvazione manuale. Nessun segreto in git.
+
+La CI gira su ogni pull request verso `main`.
