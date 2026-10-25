@@ -108,6 +108,10 @@ export function OkrForm() {
     <form
       onSubmit={handleSubmit((d) => {
         setSubmitError(null);
+        if (isTeamLead && !d.location_id) {
+          setSubmitError("okr.pickLocation");
+          return;
+        }
         mutation.mutate(d);
       })}
       className="max-w-3xl space-y-5"

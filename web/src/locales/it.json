@@ -120,6 +120,7 @@
     "collapse": "Nascondi Key Result",
     "noKr": "Nessun Key Result",
     "needLocation": "Per creare un OKR come Team Lead ti serve almeno una sede assegnata.",
+    "pickLocation": "Scegli una delle tue sedi: un Team Lead non può creare OKR senza sede.",
     "closedBanner": "Il periodo è chiuso: l'OKR è in sola lettura.",
     "deletedBanner": "Questo OKR è eliminato. Puoi ripristinarlo dall'archivio.",
     "reload": "Ricarica",
