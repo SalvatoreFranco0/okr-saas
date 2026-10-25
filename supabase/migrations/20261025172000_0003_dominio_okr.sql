@@ -58,10 +58,10 @@ create index if not exists okrs_org_team_idx on public.okrs (organization_id, te
 create index if not exists okrs_org_period_idx on public.okrs (organization_id, period_id);
 create index if not exists okrs_owner_idx on public.okrs (owner_id);
 create index if not exists okrs_tags_gin_idx on public.okrs using gin (tags);
--- gin_trgm_ops non qualificato: pg_trgm puo' stare in public o in extensions a seconda di come
--- e' stata creata; il search_path delle migrazioni Supabase include entrambi.
+-- pg_trgm sta nello schema extensions (spostata in 0002) e il search_path della sessione di
+-- migrazione non lo include: l'operator class va qualificato.
 create index if not exists okrs_search_trgm_idx on public.okrs
-  using gin (lower(title || ' ' || coalesce(description, '')) gin_trgm_ops);
+  using gin (lower(title || ' ' || coalesce(description, '')) extensions.gin_trgm_ops);
 
 -- ---------------------------------------------------------------------------
 -- key_results
