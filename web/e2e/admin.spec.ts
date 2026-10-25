@@ -35,3 +35,13 @@ test.describe('Admin (alfa_admin)', () => {
     expect(checkIn.status).toBe(403);
   });
 });
+
+test('la registrazione pubblica resta disattivata', async () => {
+  const r = await fetch(`${process.env.E2E_SUPABASE_URL}/auth/v1/signup`, {
+    method: 'POST',
+    headers: { apikey: process.env.E2E_SUPABASE_ANON_KEY ?? '', 'content-type': 'application/json' },
+    body: JSON.stringify({ email: `nuovo-${Date.now()}@test.local`, password: 'PasswordSoloPerTest-12345' }),
+  });
+  expect(r.status).toBeGreaterThanOrEqual(400);
+  expect(r.status).toBeLessThan(500);
+});
