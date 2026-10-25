@@ -1,0 +1,22 @@
+{
+  "app": { "name": "OKR Manager", "loading": "Loading...", "save": "Save", "cancel": "Cancel", "back": "Back", "create": "Create", "actions": "Actions" },
+  "nav": { "dashboard": "Dashboard", "okrs": "OKRs", "users": "Users", "manual": "Manual", "profile": "Profile", "security": "Security", "logout": "Sign out", "organization": "Organization" },
+  "roles": { "admin": "Administrator", "manager_okr": "OKR Manager", "team_lead": "Team Lead", "viewer": "Viewer" },
+  "okrStatus": { "in_pianificazione": "Planning", "attivo": "Active", "in_pausa": "Paused", "completato": "Completed", "non_raggiunto": "Not achieved" },
+  "krStatus": { "non_iniziato": "Not started", "in_progresso": "In progress", "on_track": "On track", "at_risk": "At risk", "completato": "Completed" },
+  "priority": { "bassa": "Low", "media": "Medium", "alta": "High", "critica": "Critical" },
+  "auth": {
+    "loginTitle": "Sign in to your account",
+    "email": "Email",
+    "password": "Password",
+    "login": "Sign in",
+    "loggingIn": "Signing in...",
+    "forgot": "Forgot your password?",
+    "genericError": "Incorrect email or password."
+  },
+  "security": { "title": "Security", "code": "6-digit code", "verify": "Verify" },
+  "org": { "none": "You do not belong to any active organization.", "notFound": "Organization not found or access denied.", "select": "Organization" },
+  "profile": { "title": "Profile", "language": "Language" },
+  "okr": { "listTitle": "OKRs", "new": "New OKR", "empty": "No OKRs in this organization." },
+  "errors": { "generic": "Something went wrong. Please try again.", "forbidden": "You do not have permission for this action." }
+}
