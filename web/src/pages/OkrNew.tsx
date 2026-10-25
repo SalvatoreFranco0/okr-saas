@@ -37,7 +37,7 @@ export function OkrNew() {
     mutationFn: (input: OkrCreateData) => createOkr(orgId, userId, input),
     onSuccess: async (id) => {
       await queryClient.invalidateQueries({ queryKey: ['okrs', orgId] });
-      navigate(`../${id}`);
+      navigate(`../${id}`, { relative: 'path' });
     },
     onError: (err) => setSubmitError(errorKey(err)),
   });
