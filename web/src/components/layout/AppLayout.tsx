@@ -1,23 +1,23 @@
 import { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
-import { useAuthStore } from '../../stores/authStore';
-import { authService } from '../../services/auth.service';
+import { FullPageMessage } from '../auth/ProtectedRoute';
+import { useCurrentOrg } from '../../hooks/useCurrentOrg';
+import { writeLastOrgSlug } from '../../lib/orgMemory';
 
+/** Layout di un'organizzazione: risolve lo slug dell'URL tra le organizzazioni dell'utente. */
 export function AppLayout() {
+  const { t } = useTranslation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { setUser, isAuthenticated } = useAuthStore();
+  const { org } = useCurrentOrg();
 
   useEffect(() => {
-    if (isAuthenticated) {
-      authService.getMe().then(({ data }) => {
-        setUser(data.user);
-      }).catch(() => {
-        // Token might be invalid, will be handled by interceptor
-      });
-    }
-  }, [isAuthenticated, setUser]);
+    if (org) writeLastOrgSlug(org.slug);
+  }, [org]);
+
+  if (!org) return <FullPageMessage>{t('org.notFound')}</FullPageMessage>;
 
   return (
     <div className="flex h-screen overflow-hidden">

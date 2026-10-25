@@ -1,27 +1,34 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuthStore } from '../stores/authStore';
-import { authService } from '../services/auth.service';
-import type { LoginData } from '../services/auth.service';
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Target, Eye, EyeOff } from 'lucide-react';
+import { supabase } from '../lib/supabase';
+import { useAuthStore } from '../stores/authStore';
+
+interface LoginData {
+  email: string;
+  password: string;
+}
 
 export function Login() {
+  const { t } = useTranslation();
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginData>();
-  const { login } = useAuthStore();
+  const session = useAuthStore((s) => s.session);
   const navigate = useNavigate();
-  const [error, setError] = useState('');
+  const location = useLocation();
+  const [error, setError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  const from = (location.state as { from?: { pathname: string } } | null)?.from?.pathname ?? '/';
+  if (session) return <Navigate to={from} replace />;
+
   const onSubmit = async (data: LoginData) => {
-    try {
-      setError('');
-      const res = await authService.login(data);
-      login(res.data.user, res.data.accessToken);
-      navigate('/dashboard');
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Errore di accesso');
-    }
+    setError(false);
+    const { error: authError } = await supabase.auth.signInWithPassword(data);
+    // Messaggio unico per qualunque errore: nessuna enumerazione di email.
+    if (authError) setError(true);
+    else navigate(from, { replace: true });
   };
 
   return (
@@ -33,42 +40,45 @@ export function Login() {
               <Target className="w-8 h-8 text-white" />
             </div>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">OKR Manager</h1>
-          <p className="text-gray-500 mt-1">Accedi al tuo account</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('app.name')}</h1>
+          <p className="text-gray-500 mt-1">{t('auth.loginTitle')}</p>
         </div>
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           {error && (
-            <div className="mb-4 p-3 bg-danger-50 border border-danger-100 text-danger-500 rounded-lg text-sm">
-              {error}
+            <div role="alert" className="mb-4 p-3 bg-danger-50 border border-danger-100 text-danger-500 rounded-lg text-sm">
+              {t('auth.genericError')}
             </div>
           )}
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">{t('auth.email')}</label>
               <input
+                id="email"
                 type="email"
-                {...register('email', { required: 'Email obbligatoria' })}
+                autoComplete="username"
+                {...register('email', { required: t('auth.emailRequired') })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
-                placeholder="email@esempio.com"
               />
               {errors.email && <p className="mt-1 text-sm text-danger-500">{errors.email.message}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">{t('auth.password')}</label>
               <div className="relative">
                 <input
+                  id="password"
                   type={showPassword ? 'text' : 'password'}
-                  {...register('password', { required: 'Password obbligatoria' })}
+                  autoComplete="current-password"
+                  {...register('password', { required: t('auth.passwordRequired') })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors pr-10"
-                  placeholder="La tua password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  aria-label={t('auth.password')}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -81,26 +91,13 @@ export function Login() {
               disabled={isSubmitting}
               className="w-full py-2.5 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50 transition-colors"
             >
-              {isSubmitting ? 'Accesso in corso...' : 'Accedi'}
+              {isSubmitting ? t('auth.loggingIn') : t('auth.login')}
             </button>
           </form>
 
-          <p className="text-center text-sm text-gray-500 mt-4">
-            Non hai un account?{' '}
-            <Link to="/register" className="text-primary-600 hover:underline font-medium">
-              Registrati
-            </Link>
+          <p className="text-center text-sm mt-4">
+            <Link to="/forgot-password" className="text-primary-600 hover:underline">{t('auth.forgot')}</Link>
           </p>
-        </div>
-
-        <div className="mt-6 p-4 bg-white rounded-xl border border-gray-200 text-sm text-gray-500">
-          <p className="font-medium text-gray-700 mb-2">Account di test:</p>
-          <div className="space-y-1">
-            <p>Admin: admin@okr.local / password123</p>
-            <p>Manager: manager@okr.local / password123</p>
-            <p>Viewer: viewer@okr.local / password123</p>
-            <p>Team Lead: teamlead@okr.local / password123</p>
-          </div>
         </div>
       </div>
     </div>
