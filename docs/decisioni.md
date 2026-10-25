@@ -4,7 +4,7 @@
 Fase 2 (schema database): migrazioni 0001-0007 applicate a dev, tipi generati, `db lint` e controlli di sicurezza verdi (25 ottobre 2026). Lavoro sul branch `feat/schema-db`, PR su `main` ancora da aprire. Prossima: Fase 3 (seed e test pgTAP + job CI), in una nuova sessione con Plan mode. Restano aperti: protezione di `main` (STOP-UTENTE) e la PR di prova #1, da non unire senza il via libera dell'utente.
 Repo: https://github.com/SalvatoreFranco0/okr-saas
 
-**Aggiornamento Fase 3 (25 ottobre 2026):** seed, 20 file pgTAP (508 asserzioni) e job CI `pgtap` pronti sul branch `feat/pgtap-ci`, run verde. PR ancora da aprire; il job `pgtap` va aggiunto ai check obbligatori di `main` (attende l'ok dell'utente).
+**Aggiornamento Fase 3 (25 ottobre 2026):** seed, 20 file pgTAP (508 asserzioni) e job CI `pgtap` pronti sul branch `feat/pgtap-ci`, run verde. PR #8 aperta; `pgtap` aggiunto ai check obbligatori di `main` (ora: `ci`, `analyze`, `pgtap`). Prossima: Fase 4 (fondamenta frontend), dopo il merge della PR #8.
 
 ## Decisioni (25 ottobre 2026)
 | Tema | Decisione |
