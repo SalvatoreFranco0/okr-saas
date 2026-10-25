@@ -40,6 +40,16 @@
   },
   "org": { "none": "You do not belong to any active organization.", "notFound": "Organization not found or access denied.", "select": "Organization" },
   "profile": { "title": "Profile", "language": "Language" },
-  "okr": { "listTitle": "OKRs", "new": "New OKR", "empty": "No OKRs in this organization." },
-  "errors": { "generic": "Something went wrong. Please try again.", "forbidden": "You do not have permission for this action." }
+  "okr": {
+    "listTitle": "OKRs", "new": "New OKR", "empty": "No OKRs in this organization.",
+    "edit": "Edit", "delete": "Delete", "restore": "Restore", "archive": "Archive", "archiveTitle": "Deleted OKRs",
+    "search": "Search by title or description...", "filters": "Filters", "reload": "Reload",
+    "keyResults": "Key Results", "actions": "Actions", "alignments": "Alignments", "closedBanner": "The period is closed: this OKR is read-only."
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.", "forbidden": "You do not have permission for this action.",
+    "conflict": "This item was changed by someone else or is no longer editable. Reload and try again.",
+    "periodClosed": "The period is closed: only Admins and OKR Managers can edit.",
+    "alignmentCycle": "This alignment would create a cycle between OKRs."
+  }
 }
