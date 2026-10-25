@@ -58,7 +58,7 @@ jobs:
       - name: tipi aggiornati
         run: |
           supabase gen types typescript --local > web/src/types/database.ts
-          git diff --exit-code -- web/src/types/database.ts || { echo "TMP-BEGIN"; cat web/src/types/database.ts; echo "TMP-END"; exit 1; }
+          git diff --exit-code -- web/src/types/database.ts
       - name: supabase stop
         if: always()
         run: supabase stop --no-backup
