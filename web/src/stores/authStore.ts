@@ -88,9 +88,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   reload: async () => {
-    const session = get().session;
+    // Sessione corrente dal client: dopo verify/refresh il JWT (e quindi l'aal) può essere cambiato.
+    const { data } = await supabase.auth.getSession();
+    const session = data.session ?? get().session;
     if (!session) return;
-    set(await loadUserData(session));
+    set({ session, ...(await loadUserData(session)) });
   },
 
   signOut: async () => {

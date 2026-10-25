@@ -42,7 +42,14 @@
     "removeBlocked": "Per il super-admin la verifica in due passaggi è obbligatoria.",
     "mfaRequiredTitle": "Verifica in due passaggi obbligatoria",
     "mfaRequiredText": "Per accedere a tutta l'applicazione devi completare la verifica in due passaggi.",
-    "invalidCode": "Codice non valido. Riprova."
+    "invalidCode": "Codice non valido. Riprova.",
+    "verifyText": "Apri l'app di autenticazione e inserisci il codice a 6 cifre.",
+    "enrollRequiredText": "Il tuo account richiede la verifica in due passaggi: attivala ora per accedere all'applicazione.",
+    "qrAlt": "Codice QR da inquadrare con l'app di autenticazione",
+    "statusLabel": "Stato:",
+    "removeConfirmTitle": "Disattivare la verifica in due passaggi?",
+    "removeConfirmText": "Il tuo account sarà protetto solo dalla password.",
+    "backToApp": "Torna all'applicazione"
   },
   "org": {
     "none": "Non appartieni ad alcuna organizzazione attiva. Contatta l'amministratore.",
