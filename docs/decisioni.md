@@ -1,7 +1,7 @@
 # Registro delle decisioni
 
 ## Fase corrente
-Fase 3 (seed, test pgTAP, job CI) completata e unita su `main` con la PR #8 (25 ottobre 2026): 20 file pgTAP, 508 asserzioni, job `pgtap` tra i check obbligatori di `main` (`ci`, `analyze`, `pgtap`). Prossima: Fase 4 (fondamenta frontend e fetta verticale), in una nuova sessione con Plan mode. La PR di prova #1 è stata chiusa. Restano all'utente: verifica degli *Exposed schemas* nel dashboard Supabase e Access Token per la CI (vedi in fondo).
+Fase 4 (fondamenta frontend e fetta verticale) scritta sul branch `feat/frontend-base` (25 ottobre 2026), PR non ancora aperta: attende i check `ci`, `analyze`, `pgtap` verdi e il via dell'utente. Fetta verticale provata a mano nel browser contro dev (vedi "Fase 4"). Prossima: Fase 5, con la RPC dei membri (migrazione 0008) e i test E2E. Fase 3 era unita su `main` con la PR #8 (508 asserzioni pgTAP). Restano all'utente: verifica degli *Exposed schemas* nel dashboard Supabase e Access Token per la CI (vedi in fondo).
 Repo: https://github.com/SalvatoreFranco0/okr-saas
 
 ## Decisioni (25 ottobre 2026)
@@ -54,6 +54,19 @@ Organizzazione Supabase `Salvatore Franco` (piano Free), condivisa con i progett
 - **Workflow**: aggiunto `workflow_dispatch` a `ci.yml` per lanciare i test sul branch prima della PR.
 - **Prova deliberata** (rimozione di `team_members_delete` dalla 0005): run rosso https://github.com/SalvatoreFranco0/okr-saas/actions/runs/40214997492 (falliscono `00_inventory` e `05_admin`), ripristino con `git revert`, run verde https://github.com/SalvatoreFranco0/okr-saas/actions/runs/40215642017. Le migrazioni sul branch sono identiche a `main`.
 - **Review**: i test [SONNET] non hanno avuto una review Opus separata; i file [OPUS] sono stati riletti in parte da me (00, 01, 05, 06, 07, 08) e verificati dal run CI.
+
+## Fase 4: scelte e deviazioni
+- **Super-admin e `aal2`**: la policy `platform_admins_select` richiede `aal2`, quindi a `aal1` il client non può sapere di essere super-admin. Il blocco MFA usa `app_metadata.platform_admin` (scrivibile solo dal backend privilegiato) come **indizio solo UX**; la barriera reale è `is_platform_admin()` nella RLS. Lo script di bootstrap (Fase 7) deve impostare quel flag. Regola in `web/src/lib/mfaGate.ts` (funzione pura, 21 test).
+- **Task Opus** (punti 8 e 10) delegati a un subagente Opus (la sessione era su Sonnet) e riletti per intero da me: `Security.tsx`, `mfaGate`, `ProtectedRoute`, `vercel.json`, regola `react/no-danger`. Non c'è stata una review Opus separata del diff.
+- **CSP** senza `'unsafe-inline'` (Tailwind v4 produce solo CSS esterno; `dist/index.html` senza inline); `img-src data:` serve al QR del TOTP; `connect-src` include `*.supabase.co` e `*.ingest.de.sentry.io`. `vite preview` non applica gli header: la CSP reale si verifica solo su Vercel. La sintassi `git.deploymentEnabled.main: false` non è stata verificata sulla documentazione Vercel.
+- **Creazione OKR**: OKR e KR sono due richieste non atomiche; se la seconda fallisce l'OKR resta senza KR. Da sostituire con una RPC in Fase 5. Il Team Lead non può ancora creare OKR (la policy richiede una sede, il form non la offre).
+- **Legacy rimosso** (resta nella cronologia git per il porting della Fase 5): `OkrDetail`, `OkrForm`, `OkrList`, `Dashboard`, `UserManagement`, `DatabaseManagement`, `Register`, servizi `admin/dashboard/user/auth`, Axios. `UserManual` resta com'era (da aggiornare in Fase 5). La dashboard è un segnaposto (Fase 6).
+- **Migrazione 0008 rimandata alla Fase 5** (decisione dell'utente): RPC `public.org_member_directory(p_org)` `security invoker` che chiama `private.member_directory(p_org)` (`security definer` solo in `private`); espone nome, cognome e ruolo dei membri attivi, solo a chi ha un ruolo nell'organizzazione, senza email. Scrivere SQL e test pgTAP (anon negato, non membro, cross-tenant, membro disattivato, `00_inventory`) e chiedere l'ok prima di `db push`.
+- **Dati di test su dev** (solo dev, mai prod): 8 utenti `@test.local` creati con SQL diretto (nessuna chiave privilegiata), password comune di test comunicata in chat, org Alfa e Beta, sedi, team, periodi Q4 aperto e Q3 chiuso, 4 OKR. Utenti: `superadmin` (con flag `platform_admin`), `alfa_admin`, `alfa_manager`, `alfa_tl_milano`, `alfa_tl_senza_sede`, `alfa_viewer_roma`, `beta_admin`, `multi_org` (admin Alfa, viewer Beta). Lo script non è nel repo.
+- **CLI Supabase 2.98.2** non legge `supabase/config.toml` (chiavi `orioledb_version`, `local_smtp` di una CLI più recente). Aggirato con `--workdir` su una cartella temporanea con la stessa `.temp` del link a dev. Da risolvere aggiornando la CLI (disponibile 2.122.0).
+- **`.env.local`** locale non contiene `VITE_SUPABASE_URL`/`VITE_SUPABASE_ANON_KEY`: per le prove le ho passate come variabili di processo (URL e chiave publishable sono pubbliche). L'utente deve aggiungerle al file.
+- **Prova nel browser** (dev): non autenticato → `/login`; `alfa_admin` vede nome/ruolo e 3 OKR di Alfa (non quello di Beta); creato un OKR con un KR; check-in 20→40 su KR 20→60 = 50,0% calcolato dal trigger, con cronologia; cambio lingua IT/EN; `multi_org` vede il selettore org, in Beta è Viewer senza pulsante di creazione e senza l'OKR della sede Torino; `/o/beta/okrs/new` da Viewer torna alla lista; `/o/gamma/...` → "Organizzazione non trovata"; `superadmin` vede solo l'attivazione obbligatoria del TOTP. Bug trovato e corretto: dopo la creazione si finiva sulla dashboard (`navigate` relativo al percorso).
+- **Non verificato**: TOTP completo con codice, ruoli Manager/Team Lead/Viewer con sede, CSP su Vercel.
 
 ## Ancora da fare dall'utente
 - Verificare nel dashboard Supabase (sola lettura) che `private` non sia tra gli *Exposed schemas* (piano 11.2, punto 7).
