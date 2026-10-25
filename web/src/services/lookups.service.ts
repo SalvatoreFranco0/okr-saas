@@ -1,4 +1,3 @@
-import type { PostgrestError } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 
 export async function listPeriods(orgId: string) {
@@ -52,15 +51,12 @@ export interface Member {
   role: 'admin' | 'manager_okr' | 'team_lead' | 'viewer';
 }
 
-// TODO: rimuovere il cast quando web/src/types/database.ts include la RPC 0008 (rigenerato dalla CI).
-type RpcResult = PromiseLike<{ data: unknown; error: PostgrestError | null }>;
-const rpcUntyped = supabase.rpc.bind(supabase) as unknown as (fn: string, args: Record<string, unknown>) => RpcResult;
 
 /** Membri attivi dell'organizzazione (nome e ruolo, senza email) per i menu responsabile/assegnatario. */
 export async function listMembers(orgId: string): Promise<Member[]> {
-  const { data, error } = await rpcUntyped('org_member_directory', { p_org: orgId });
+  const { data, error } = await supabase.rpc('org_member_directory', { p_org: orgId });
   if (error) throw error;
-  return (data ?? []) as Member[];
+  return data ?? [];
 }
 
 export const memberName = (m: Pick<Member, 'first_name' | 'last_name'> | undefined) =>

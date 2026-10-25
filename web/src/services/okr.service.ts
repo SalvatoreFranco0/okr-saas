@@ -1,4 +1,3 @@
-import type { PostgrestError } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import { ConflictError, sanitizeSearch } from '../lib/errors';
 import { orNull, parseTags, type ActionData, type KeyResultData, type OkrCreateData, type OkrEditData } from '../schemas/okr';
@@ -114,13 +113,10 @@ function okrPayload(d: OkrEditData) {
   };
 }
 
-// TODO: rimuovere il cast quando web/src/types/database.ts include le RPC 0008 (rigenerato dalla CI).
-type RpcResult = PromiseLike<{ data: unknown; error: PostgrestError | null }>;
-const rpcUntyped = supabase.rpc.bind(supabase) as unknown as (fn: string, args: Record<string, unknown>) => RpcResult;
 
 /** Crea OKR e KR in una sola transazione (RPC `okr_create_with_krs`, security invoker: decide la RLS). */
 export async function createOkr(orgId: string, d: OkrCreateData): Promise<string> {
-  const { data, error } = await rpcUntyped('okr_create_with_krs', {
+  const { data, error } = await supabase.rpc('okr_create_with_krs', {
     p_okr: { organization_id: orgId, ...okrPayload(d) },
     p_krs: d.keyResults.map((kr) => ({
       title: kr.title,
@@ -133,7 +129,7 @@ export async function createOkr(orgId: string, d: OkrCreateData): Promise<string
     })),
   });
   if (error) throw error;
-  return data as string;
+  return data;
 }
 
 export async function updateOkr(orgId: string, id: string, version: number, d: OkrEditData): Promise<void> {
