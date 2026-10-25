@@ -1,7 +1,7 @@
 # Registro delle decisioni
 
 ## Fase corrente
-Fase 4 (fondamenta frontend e fetta verticale) scritta sul branch `feat/frontend-base` (25 ottobre 2026), PR non ancora aperta: attende i check `ci`, `analyze`, `pgtap` verdi e il via dell'utente. Fetta verticale provata a mano nel browser contro dev (vedi "Fase 4"). Prossima: Fase 5, con la RPC dei membri (migrazione 0008) e i test E2E. Fase 3 era unita su `main` con la PR #8 (508 asserzioni pgTAP). Restano all'utente: verifica degli *Exposed schemas* nel dashboard Supabase e Access Token per la CI (vedi in fondo).
+Fase 4 (fondamenta frontend e fetta verticale) completata e unita su `main` con la PR #9 (25 ottobre 2026; check `ci`, `analyze`, `pgtap` verdi). Fetta verticale provata a mano nel browser contro dev (vedi "Fase 4"). Prossima: Fase 5, in una nuova sessione con Plan mode, con la RPC dei membri (migrazione 0008), la decisione sul finding RLS "TOTP solo UX per gli utenti normali" (vedi "Fase 4") e i test E2E. Fase 3 era unita su `main` con la PR #8 (508 asserzioni pgTAP). Restano all'utente: verifica degli *Exposed schemas* nel dashboard Supabase e Access Token per la CI (vedi in fondo).
 Repo: https://github.com/SalvatoreFranco0/okr-saas
 
 ## Decisioni (25 ottobre 2026)
