@@ -87,7 +87,10 @@ export function OkrForm() {
     onError: (err) => setSubmitError(errorKey(err)),
   });
 
-  if (!ready || periodsQ.isLoading || (isEdit && okrQ.isLoading)) return <p className="text-gray-500">{t('app.loading')}</p>;
+  // I select non sono controllati: il form si monta solo con tutte le opzioni già caricate,
+  // altrimenti il valore iniziale (es. il responsabile) cadrebbe sulla prima voce.
+  const loading = periodsQ.isLoading || locationsQ.isLoading || teamsQ.isLoading || membersQ.isLoading;
+  if (!ready || loading || (isEdit && okrQ.isLoading)) return <p className="text-gray-500">{t('app.loading')}</p>;
   if (isEdit && !okr) return <p className="text-gray-500">{t('okr.notFound')}</p>;
   const period = periods.find((p) => p.id === okr?.period_id);
   if (isEdit && okr && !canEditOkr(access, okr, !!period?.is_closed)) {
