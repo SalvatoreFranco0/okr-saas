@@ -1,7 +1,7 @@
 # Registro delle decisioni
 
 ## Fase corrente
-Fase 1 (bootstrap repo e CI): completata, salvo CodeQL (vedi Deviazioni) e protezione di `main` (STOP-UTENTE). Repo: https://github.com/SalvatoreFranco0/okr-saas. PR di prova #1 aperta (`ci` verde), da non unire finché non decide l'utente. Prossima: Fase 2 (schema database), in una nuova sessione con Plan mode.
+Fase 1 (bootstrap repo e CI): completata, salvo protezione di `main` (STOP-UTENTE). Repo: https://github.com/SalvatoreFranco0/okr-saas. PR di prova #1 aperta (`ci` verde), da non unire finché non decide l'utente. Prossima: Fase 2 (schema database), in una nuova sessione con Plan mode.
 
 ## Decisioni (25 ottobre 2026)
 | Tema | Decisione |
@@ -26,7 +26,7 @@ Organizzazione Supabase `Salvatore Franco` (piano Free), condivisa con i progett
 - **Fase 1, init in cartella esistente**: `C:devokr-saas` esisteva già, quindi `git init` + `gh repo create --source` invece di `--clone`.
 - **Fase 1, fix al codice legacy** (solo per far passare la CI): `npm audit fix` (vite, zod), `import type` in `ConfirmDialog.tsx`, `mutationFn` async in `OkrForm.tsx`. Aggiunti gli script `typecheck` e `test` (`vitest run --passWithNoTests`).
 - **Fase 1, lint**: `@typescript-eslint/no-explicit-any` portata da `error` a `warn` (33 occorrenze nel codice legacy). Da riportare a `error` a fine Fase 5.
-- **Fase 1, CodeQL**: il workflow `codeql.yml` esegue l'analisi ma fallisce all'upload perché sui repo privati Code scanning richiede GitHub Advanced Security (a pagamento). Non attivato: decisione dell'utente (attivare, rendere il repo pubblico, o rimuovere il workflow).
+- **Fase 1, repo pubblico** (decisione dell'utente, 25 ottobre 2026): su repo privato CodeQL richiedeva GitHub Advanced Security a pagamento. Il repo è ora pubblico; CodeQL e `ci` sono verdi. Prima della pubblicazione ho scansionato i file tracciati: nessun segreto. Restano pubblici l'email degli autori dei commit, il ref e la chiave publishable di dev. Con repo pubblico i secret restano solo in GitHub Secrets, mai in file.
 
 ## Ancora da fare dall'utente
 - Access Token Supabase dedicato alla CI (Account → Access Tokens), solo per i GitHub Secrets in Fase 8.
