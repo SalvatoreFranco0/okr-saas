@@ -1,6 +1,7 @@
 name: ci
 
 on:
+  workflow_dispatch:
   pull_request:
   push:
     branches: [main]
@@ -27,3 +28,37 @@ jobs:
       - run: npm test
       - run: npm run build
       - run: npm audit --audit-level=high
+
+  pgtap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      # supabase/setup-cli v3.0.1
+      - uses: supabase/setup-cli@45a513f8c64c0bc8e0e3dfe572b5c95be85f6359
+        with:
+          version: 2.122.0
+      # Supabase effimero: servono db, auth (crea auth.users) e postgres-meta (gen types).
+      - name: supabase start
+        run: supabase start -x studio,realtime,storage-api,imgproxy,mailpit,edge-runtime,logflare,vector,supavisor
+      - name: supabase db reset (migrazioni + seed)
+        run: supabase db reset
+      # Helper di test solo CI: non sono in nessuna migrazione.
+      - name: installa helper pgTAP
+        env:
+          # pgTAP sta nello schema extensions; le funzioni degli helper (is, ok, ...) lo richiedono nel path.
+          PGOPTIONS: -c search_path=public,extensions
+        run: |
+          DB=postgresql://postgres:postgres@127.0.0.1:54322/postgres
+          psql -v ON_ERROR_STOP=1 "$DB" -c "create extension if not exists pgtap with schema extensions"
+          for f in supabase/ci/supabase_test_helpers.sql supabase/ci/test_setup.sql; do
+            psql -v ON_ERROR_STOP=1 "$DB" -f "$f"
+          done
+      - name: supabase test db
+        run: supabase test db
+      - name: tipi aggiornati
+        run: |
+          supabase gen types typescript --local > web/src/types/database.ts
+          git diff --exit-code -- web/src/types/database.ts
+      - name: supabase stop
+        if: always()
+        run: supabase stop --no-backup
