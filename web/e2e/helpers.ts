@@ -31,8 +31,8 @@ export async function tokenFor(user: string): Promise<string> {
     headers: { apikey: ANON_KEY, 'content-type': 'application/json' },
     body: JSON.stringify({ email: `${user}@test.local`, password: PASSWORD }),
   });
-  const j = (await r.json()) as { access_token?: string };
-  if (!j.access_token) throw new Error(`login API fallito per ${user}: ${r.status}`);
+  const j = (await r.json()) as { access_token?: string; msg?: string; error_code?: string };
+  if (!j.access_token) throw new Error(`login API fallito per ${user}: ${r.status} ${j.error_code ?? ""} ${j.msg ?? ""}`);
   return j.access_token;
 }
 
