@@ -3,7 +3,7 @@
 -- un grant o una tabella: e' il controllo richiesto dal "Fatto quando" della fase 3.
 -- Gira interamente come postgres: legge solo i cataloghi.
 begin;
-select plan(16);
+select plan(18);
 
 -- ---------------------------------------------------------------------------
 -- (a) Tabelle di public: elenco esatto e RLS abilitata E forzata su ognuna
@@ -205,6 +205,36 @@ select is_empty(
       where n.nspname = 'public'
         and p.prosecdef $$,
   'nessuna funzione security definer nello schema public'
+);
+
+-- Inventario esatto delle funzioni di public (RPC esposte da PostgREST), escluse quelle di
+-- estensioni. Nome + argomenti di identita' (indipendenti dal search_path).
+select set_eq(
+  $$ select p.proname::text, pg_get_function_identity_arguments(p.oid)
+       from pg_proc p
+       join pg_namespace n on n.oid = p.pronamespace
+      where n.nspname = 'public'
+        and not exists (select 1 from pg_depend d
+                         where d.classid = 'pg_proc'::regclass and d.objid = p.oid and d.deptype = 'e') $$,
+  $$ values ('kr_check_in', 'p_kr uuid, p_value numeric, p_note text'),
+            ('dashboard_stats', 'p_org uuid, p_period uuid'),
+            ('org_member_directory', 'p_org uuid'),
+            ('okr_create_with_krs', 'p_okr jsonb, p_krs jsonb') $$,
+  'inventario esatto delle funzioni di public (0004, 0007, 0008): una RPC nuova richiede di aggiornare i test'
+);
+
+-- La rubrica legge memberships/profiles bypassando la RLS: deve stare in private, essere
+-- security definer con search_path vuoto ed eseguibile solo da authenticated.
+select ok(
+  (select p.prosecdef and p.provolatile = 's'
+     from pg_proc p where p.oid = 'private.member_directory(uuid)'::regprocedure)
+  and has_function_privilege('authenticated', 'private.member_directory(uuid)', 'EXECUTE')
+  and not has_function_privilege('anon', 'private.member_directory(uuid)', 'EXECUTE')
+  and has_function_privilege('authenticated', 'public.org_member_directory(uuid)', 'EXECUTE')
+  and not has_function_privilege('anon', 'public.org_member_directory(uuid)', 'EXECUTE')
+  and has_function_privilege('authenticated', 'public.okr_create_with_krs(jsonb, jsonb)', 'EXECUTE')
+  and not has_function_privilege('anon', 'public.okr_create_with_krs(jsonb, jsonb)', 'EXECUTE'),
+  'member_directory (private, definer, stable) e le RPC della 0008: execute solo ad authenticated'
 );
 
 -- ---------------------------------------------------------------------------

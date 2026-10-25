@@ -651,7 +651,15 @@ isOneToOne: false
         to: "key_results"
         isOneToOne: true
         isSetofReturn: false
-      } }
+      } },
+"okr_create_with_krs":
+{ Args: { "p_krs": Json,"p_okr": Json }; Returns: string
+                           },
+"org_member_directory":
+{ Args: { "p_org": string }; Returns: {
+              "first_name": string,"last_name": string,"role": Database["public"]['Enums']["org_role"],"user_id": string
+            }[]
+                           }
           }
           Enums: {
             "kr_status": "non_iniziato"|"in_progresso"|"on_track"|"at_risk"|"completato","okr_status": "in_pianificazione"|"attivo"|"in_pausa"|"completato"|"non_raggiunto","org_role": "admin"|"manager_okr"|"team_lead"|"viewer","priority": "bassa"|"media"|"alta"|"critica"

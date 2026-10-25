@@ -10,7 +10,7 @@ import { RootRedirect } from './pages/RootRedirect';
 import { Security } from './pages/Security';
 import { Dashboard } from './pages/Dashboard';
 import { OkrList } from './pages/OkrList';
-import { OkrNew } from './pages/OkrNew';
+import { OkrForm } from './pages/OkrForm';
 import { OkrDetail } from './pages/OkrDetail';
 import { UserManual } from './pages/UserManual';
 import { CAN_WRITE_OKR } from './hooks/useCurrentOrg';
@@ -39,15 +39,24 @@ function App() {
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="okrs" element={<OkrList />} />
+          <Route path="okrs/archive" element={<OkrList archived />} />
           <Route
             path="okrs/new"
             element={
               <RoleGuard roles={CAN_WRITE_OKR}>
-                <OkrNew />
+                <OkrForm />
               </RoleGuard>
             }
           />
           <Route path="okrs/:id" element={<OkrDetail />} />
+          <Route
+            path="okrs/:id/edit"
+            element={
+              <RoleGuard roles={CAN_WRITE_OKR}>
+                <OkrForm />
+              </RoleGuard>
+            }
+          />
           <Route path="manual" element={<UserManual />} />
         </Route>
       </Route>
