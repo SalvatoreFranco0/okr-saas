@@ -55,54 +55,76 @@ async function loadUserData(session: Session) {
   return {
     profile: profileRes.data ?? null,
     orgs,
+    // Se il livello non si può calcolare si chiude in modo prudente: il gate chiede la verifica.
     aal: (aalRes.data?.currentLevel ?? 'aal1') as Aal,
-    nextAal: (aalRes.data?.nextLevel ?? 'aal1') as Aal,
+    nextAal: (aalRes.error ? 'aal2' : (aalRes.data?.nextLevel ?? 'aal1')) as Aal,
     isPlatformAdmin: !!platformRes.data,
     platformAdminHint: session.user.app_metadata?.platform_admin === true,
   };
 }
 
-export const useAuthStore = create<AuthState>((set, get) => ({
-  status: 'loading',
-  session: null,
-  ...EMPTY,
+// Numero di generazione: ogni cambio di sessione lo incrementa, così la risposta di un caricamento
+// ormai superato (utente precedente, logout nel frattempo) non sovrascrive lo stato corrente.
+let generation = 0;
 
-  init: () => {
-    // Nessuna chiamata a supabase dentro il callback (rischio di deadlock): la si rimanda.
-    const { data } = supabase.auth.onAuthStateChange((event, session) => {
-      setTimeout(async () => {
-        if (!session) {
-          queryClient.clear();
-          set({ status: 'ready', session: null, ...EMPTY });
-          return;
-        }
-        if (event === 'TOKEN_REFRESHED' && get().session?.user.id === session.user.id) {
-          set({ session });
-          return;
-        }
-        const userData = await loadUserData(session);
-        set({ status: 'ready', session, ...userData });
-      }, 0);
-    });
-    return () => data.subscription.unsubscribe();
-  },
+export const useAuthStore = create<AuthState>((set, get) => {
+  async function apply(session: Session) {
+    const gen = ++generation;
+    const userData = await loadUserData(session);
+    if (gen !== generation) return;
+    set({ status: 'ready', session, ...userData });
+  }
 
-  reload: async () => {
-    // Sessione corrente dal client: dopo verify/refresh il JWT (e quindi l'aal) può essere cambiato.
-    const { data } = await supabase.auth.getSession();
-    const session = data.session ?? get().session;
-    if (!session) return;
-    set({ session, ...(await loadUserData(session)) });
-  },
+  return {
+    status: 'loading',
+    session: null,
+    ...EMPTY,
 
-  signOut: async () => {
-    await supabase.auth.signOut();
-    queryClient.clear();
-    set({ session: null, ...EMPTY });
-  },
+    init: () => {
+      // Nessuna chiamata a supabase dentro il callback (rischio di deadlock): la si rimanda.
+      const { data } = supabase.auth.onAuthStateChange((event, session) => {
+        setTimeout(async () => {
+          if (!session) {
+            generation++;
+            queryClient.clear();
+            set({ status: 'ready', session: null, ...EMPTY });
+            return;
+          }
+          const previous = get().session?.user.id;
+          if (event === 'TOKEN_REFRESHED' && previous === session.user.id) {
+            set({ session });
+            return;
+          }
+          if (previous && previous !== session.user.id) {
+            // Cambio utente senza SIGNED_OUT (link di invito, altra scheda): nessun dato dell'utente precedente.
+            generation++;
+            queryClient.clear();
+            set({ status: 'loading', session: null, ...EMPTY });
+          }
+          await apply(session);
+        }, 0);
+      });
+      return () => data.subscription.unsubscribe();
+    },
 
-  setProfile: (profile) => set({ profile }),
-}));
+    reload: async () => {
+      // Sessione corrente dal client: dopo verify/refresh il JWT (e quindi l'aal) può essere cambiato.
+      const { data } = await supabase.auth.getSession();
+      const session = data.session ?? get().session;
+      if (!session) return;
+      await apply(session);
+    },
+
+    signOut: async () => {
+      generation++;
+      await supabase.auth.signOut();
+      queryClient.clear();
+      set({ session: null, ...EMPTY });
+    },
+
+    setProfile: (profile) => set({ profile }),
+  };
+});
 
 /** Ruolo effettivo nell'organizzazione indicata dallo slug dell'URL. */
 export function roleInOrg(orgs: OrgMembership[], slug: string | undefined): OrgRole | null {
