@@ -4,6 +4,8 @@
 Fase 2 (schema database): migrazioni 0001-0007 applicate a dev, tipi generati, `db lint` e controlli di sicurezza verdi (25 ottobre 2026). Lavoro sul branch `feat/schema-db`, PR su `main` ancora da aprire. Prossima: Fase 3 (seed e test pgTAP + job CI), in una nuova sessione con Plan mode. Restano aperti: protezione di `main` (STOP-UTENTE) e la PR di prova #1, da non unire senza il via libera dell'utente.
 Repo: https://github.com/SalvatoreFranco0/okr-saas
 
+**Aggiornamento Fase 3 (25 ottobre 2026):** seed, 20 file pgTAP (508 asserzioni) e job CI `pgtap` pronti sul branch `feat/pgtap-ci`, run verde. PR ancora da aprire; il job `pgtap` va aggiunto ai check obbligatori di `main` (attende l'ok dell'utente).
+
 ## Decisioni (25 ottobre 2026)
 | Tema | Decisione |
 |---|---|
@@ -42,6 +44,18 @@ Organizzazione Supabase `Salvatore Franco` (piano Free), condivisa con i progett
 - **Da misurare in Fase 9**: costo di `my_access()` chiamata dall'audit a ogni riga scritta; purge del tenant (FK composte NO ACTION con più percorsi di cascata) da provare con pgTAP in Fase 3.
 - **Hook anti-prod**: `.claude/refs.json` ora ha il ref dev. L'hook blocca anche query innocue che contengono `service_role` insieme a `echo/print/cat/type`; va aggirato riformulando la query.
 - **Esiti dei controlli** su dev: 7 migrazioni locale=remoto; `db lint --linked` senza errori; 18 tabelle in `public`, tutte con RLS abilitata e forzata e senza privilegi `anon`; nessuna funzione di `public` o `private` eseguibile da `anon`; nessuna `security definer` in `public`.
+
+## Fase 3: scelte e deviazioni
+- **Helper pgTAP**: `supabase_test_helpers` 0.0.6 vendorizzato in `supabase/ci/` (commit upstream e sha256 in testa al file, tolta solo la guardia `\quit`), applicato dalla CI con `psql` dopo `db reset`. Mai in migrazioni. Wrapper `tests.authenticate_as_aal` in `supabase/ci/test_setup.sql` (aggiunge `aal` e `role` al JWT simulato): unica funzione nuova.
+- **Seed** (`supabase/seed.sql`): solo per il Supabase effimero; `db push` non lo esegue. UUID fissi documentati in testa al file.
+- **Dopo `authenticate_as_aal`** il backend si ripristina con `clear_authentication()` + `reset role` (altrimenti il claim `role` resta e `is_trusted_backend()` è falso).
+- **`tests.rls_enabled` dell'helper non si usa**: conta anche le viste. `00_inventory` ha un controllo proprio (tabelle, RLS forzata, grant, elenco esatto delle 42 policy, viste `security_invoker`).
+- **Tipi**: `web/src/types/database.ts` ora è generato con `--local` nella CI (senza formatter, quindi indentazione grezza). Il vecchio file veniva da dev (`--linked`).
+- **Divergenze piano/migrazioni emerse dai test**: `forbid_tenant_change` esenta qualunque backend fidato (il piano dice solo service role nella purge); `platform_admins`/`support_sessions` sono leggibili dal super-admin aal2 (5.6) anche se 5.3 dice "nessun accesso client"; i client ricevono 42501 (RLS prima delle FK) per KR/azioni/allineamenti cross-tenant e 23503 negli altri casi; le FK sono `NO ACTION` e non `RESTRICT` (caso 15).
+- **Non coperto**: concorrenza reale A→B / B→A degli allineamenti (servirebbero commit su due sessioni); si verifica che la funzione prenda `pg_advisory_xact_lock` prima della ricorsione. "private non raggiungibile come RPC" non è verificabile da SQL: si verifica che `anon` non abbia USAGE e che `private` non sia in `[api].schemas`.
+- **Workflow**: aggiunto `workflow_dispatch` a `ci.yml` per lanciare i test sul branch prima della PR.
+- **Prova deliberata** (rimozione di `team_members_delete` dalla 0005): run rosso https://github.com/SalvatoreFranco0/okr-saas/actions/runs/40214997492 (falliscono `00_inventory` e `05_admin`), ripristino con `git revert`, run verde https://github.com/SalvatoreFranco0/okr-saas/actions/runs/40215642017. Le migrazioni sul branch sono identiche a `main`.
+- **Review**: i test [SONNET] non hanno avuto una review Opus separata; i file [OPUS] sono stati riletti in parte da me (00, 01, 05, 06, 07, 08) e verificati dal run CI.
 
 ## Ancora da fare dall'utente
 - Verificare nel dashboard Supabase (sola lettura) che `private` non sia tra gli *Exposed schemas* (piano 11.2, punto 7).
