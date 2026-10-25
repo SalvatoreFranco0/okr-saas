@@ -199,6 +199,10 @@ create policy team_members_update on public.team_members
   using (private.role_of((select private.my_access()), organization_id) in ('admin', 'manager_okr'))
   with check (private.role_of((select private.my_access()), organization_id) in ('admin', 'manager_okr'));
 
+drop policy if exists team_members_delete on public.team_members;
+create policy team_members_delete on public.team_members
+  for delete to authenticated
+  using (private.role_of((select private.my_access()), organization_id) in ('admin', 'manager_okr'));
 
 -- ---------------------------------------------------------------------------
 -- memberships, membership_locations: SOLO lettura (Admin/Manager tutte, gli altri la propria).
