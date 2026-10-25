@@ -62,3 +62,39 @@ jobs:
       - name: supabase stop
         if: always()
         run: supabase stop --no-backup
+
+  # E2E Playwright contro un Supabase effimero (seed incluso). Non è ancora tra i check obbligatori di main.
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      # supabase/setup-cli v3.0.1
+      - uses: supabase/setup-cli@45a513f8c64c0bc8e0e3dfe572b5c95be85f6359
+        with:
+          version: 2.122.0
+      - name: supabase start
+        run: supabase start -x studio,realtime,storage-api,imgproxy,mailpit,edge-runtime,logflare,vector,supavisor
+      - name: supabase db reset (migrazioni + seed)
+        run: supabase db reset
+      - name: variabili E2E
+        run: |
+          eval "$(supabase status -o env | grep -E '^(API_URL|ANON_KEY)=')"
+          echo "E2E_SUPABASE_URL=$API_URL" >> "$GITHUB_ENV"
+          echo "E2E_SUPABASE_ANON_KEY=$ANON_KEY" >> "$GITHUB_ENV"
+      - name: npm ci
+        working-directory: web
+        run: npm ci
+      - name: installa Chromium
+        working-directory: web
+        run: npx playwright install --with-deps chromium
+      - name: Playwright
+        working-directory: web
+        run: npm run e2e
+      - name: supabase stop
+        if: always()
+        run: supabase stop --no-backup
