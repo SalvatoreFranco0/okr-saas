@@ -147,6 +147,118 @@
     "link": "Collega",
     "unlink": "Scollega"
   },
+  "manual": {
+    "title": "Manuale utente",
+    "intro": {
+      "title": "Introduzione",
+      "lead": "OKR Manager serve a definire obiettivi (OKR), misurarli con Key Result e seguirne l'avanzamento nel tempo. Ogni cliente lavora nella propria organizzazione, isolata dalle altre.",
+      "blocks": [
+        {
+          "title": "Concetti base",
+          "items": [
+            "OKR: un obiettivo qualitativo, legato a un periodo (es. Q4 2026) e, se serve, a una sede e a un team.",
+            "Key Result (KR): un risultato misurabile con valore iniziale, obiettivo e valore attuale. L'avanzamento dell'OKR è la media pesata dei suoi KR e lo calcola il database: non si modifica a mano.",
+            "Check-in: l'aggiornamento del valore attuale di un KR, con una nota facoltativa. Ogni check-in resta nella cronologia.",
+            "Azione: un'attività collegata a un KR, con scadenza e assegnatario. Le azioni non influenzano l'avanzamento.",
+            "Allineamento: il collegamento tra un OKR e un OKR superiore dello stesso periodo. Non sono ammessi cicli."
+          ]
+        },
+        {
+          "title": "Navigazione",
+          "items": [
+            "La barra laterale porta a Dashboard, OKR, Manuale e Sicurezza.",
+            "Se appartieni a più organizzazioni, le cambi dal selettore in alto: l'organizzazione attiva è nell'indirizzo della pagina.",
+            "Nella lista OKR puoi cercare per titolo o descrizione e filtrare per stato, priorità, periodo, sede e team."
+          ]
+        }
+      ]
+    },
+    "admin": {
+      "title": "Amministratore",
+      "lead": "Può fare tutto sugli OKR dell'organizzazione, anche nei periodi chiusi.",
+      "blocks": [
+        {
+          "title": "OKR",
+          "items": [
+            "Crea, modifica ed elimina qualsiasi OKR, scegliendo periodo, sede (o tutta l'organizzazione), team e responsabile.",
+            "Gli OKR eliminati finiscono nell'Archivio: da lì si possono ripristinare.",
+            "Gestisce Key Result, Azioni e Allineamenti di qualsiasi OKR."
+          ]
+        },
+        {
+          "title": "Utenti e struttura",
+          "items": ["La gestione di utenti, sedi, team e periodi da interfaccia arriva in una fase successiva."]
+        }
+      ]
+    },
+    "manager": {
+      "title": "Manager OKR",
+      "lead": "Gestisce gli OKR come l'Amministratore.",
+      "blocks": [
+        {
+          "title": "OKR",
+          "items": [
+            "Crea, modifica, elimina e ripristina qualsiasi OKR, anche in periodi chiusi.",
+            "Gestisce Key Result, Azioni e Allineamenti.",
+            "Non può modificare ruoli e appartenenze degli utenti."
+          ]
+        }
+      ]
+    },
+    "teamlead": {
+      "title": "Team Lead",
+      "lead": "Lavora sugli OKR delle proprie sedi.",
+      "blocks": [
+        {
+          "title": "Cosa può fare",
+          "items": [
+            "Vede gli OKR senza sede e quelli delle sedi a cui è assegnato.",
+            "Crea OKR solo in una delle proprie sedi e come responsabile. Serve almeno una sede assegnata.",
+            "Modifica i propri OKR e quelli del proprio team, con Key Result, check-in, Azioni e Allineamenti, solo nei periodi aperti.",
+            "Gli OKR senza sede li modificano solo Amministratore e Manager."
+          ]
+        },
+        {
+          "title": "Cosa non può fare",
+          "items": ["Eliminare o ripristinare OKR.", "Modificare OKR in un periodo chiuso: vedrà l'avviso di sola lettura."]
+        }
+      ]
+    },
+    "viewer": {
+      "title": "Viewer",
+      "lead": "Consulta gli OKR, senza modificarli.",
+      "blocks": [
+        {
+          "title": "Cosa può fare",
+          "items": ["Vede gli OKR senza sede e quelli delle proprie sedi, con Key Result, cronologia dei check-in, Azioni e Allineamenti."]
+        },
+        {
+          "title": "Cosa non può fare",
+          "items": ["Creare, modificare o eliminare nulla: i pulsanti non compaiono e il database rifiuta comunque le scritture."]
+        }
+      ]
+    },
+    "security": {
+      "title": "Sicurezza e accesso",
+      "lead": "Come proteggere il tuo account.",
+      "blocks": [
+        {
+          "title": "Accesso",
+          "items": [
+            "Le password hanno almeno 12 caratteri. Non esiste la registrazione libera: si entra con un invito.",
+            "Se hai dimenticato la password, usa il link «Password dimenticata?» nella pagina di accesso."
+          ]
+        },
+        {
+          "title": "Verifica in due passaggi (TOTP)",
+          "items": [
+            "Dalla pagina Sicurezza puoi attivare un'app di autenticazione. Dopo l'attivazione, a ogni accesso dovrai inserire il codice a 6 cifre prima di vedere i dati.",
+            "Per il super-admin la verifica in due passaggi è obbligatoria."
+          ]
+        }
+      ]
+    }
+  },
   "validation": {
     "required": "Campo obbligatorio",
     "tooLong": "Testo troppo lungo",
