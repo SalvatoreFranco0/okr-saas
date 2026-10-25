@@ -23,7 +23,7 @@ Organizzazione Supabase `Salvatore Franco` (piano Free), condivisa con i progett
 - **`okr-saas-prod` rimandato** (decisione dell'utente). Motivo: non serve prima della Fase 8 e il piano Free ha un limite di progetti. Va creato (Central EU, password diversa da dev) prima della Fase 8; prima di dati reali va passato a Pro (decisione di spesa dell'utente). Fino ad allora il "Fatto quando" della Fase 0 resta parzialmente aperto.
 - Supabase CLI già loggata a livello globale (v2.98.2); Vercel CLI 65.2.0 loggata (25 ottobre 2026).
 
-- **Fase 1, init in cartella esistente**: `C:devokr-saas` esisteva già, quindi `git init` + `gh repo create --source` invece di `--clone`.
+- **Fase 1, init in cartella esistente**: `C:\dev\okr-saas` esisteva già, quindi `git init` + `gh repo create --source` invece di `--clone`.
 - **Fase 1, fix al codice legacy** (solo per far passare la CI): `npm audit fix` (vite, zod), `import type` in `ConfirmDialog.tsx`, `mutationFn` async in `OkrForm.tsx`. Aggiunti gli script `typecheck` e `test` (`vitest run --passWithNoTests`).
 - **Fase 1, lint**: `@typescript-eslint/no-explicit-any` portata da `error` a `warn` (33 occorrenze nel codice legacy). Da riportare a `error` a fine Fase 5.
 - **Fase 1, repo pubblico** (decisione dell'utente, 25 ottobre 2026): su repo privato CodeQL richiedeva GitHub Advanced Security a pagamento. Il repo è ora pubblico; CodeQL e `ci` sono verdi. Prima della pubblicazione ho scansionato i file tracciati: nessun segreto. Restano pubblici l'email degli autori dei commit, il ref e la chiave publishable di dev. Con repo pubblico i secret restano solo in GitHub Secrets, mai in file.
