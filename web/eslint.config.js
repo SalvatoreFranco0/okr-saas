@@ -24,9 +24,7 @@ export default defineConfig([
     },
     settings: { react: { version: 'detect' } },
     rules: {
-      // Codice legacy portato così com'è: i `any` spariscono con il porting delle fasi 4-5.
-      // Da riportare a 'error' al termine della fase 5 (vedi docs/decisioni.md).
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-explicit-any': 'error',
       // Vietato dangerouslySetInnerHTML (XSS): piano, Fase 4 punto 10.
       'react/no-danger': 'error',
     },
