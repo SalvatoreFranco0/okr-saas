@@ -15,6 +15,7 @@ import { listLocations, listMembers, listPeriods, listTeams, memberName } from '
 import { canCreateOkr, canEditOkr } from '../lib/permissions';
 import { errorKey } from '../lib/errors';
 import { Banner, Field, btnPrimary, btnSecondary, inputCls } from '../components/ui/Field';
+import { ErrorNote } from '../components/ui/ErrorNote';
 
 type FormValues = OkrCreateInput & OkrEditInput;
 const EMPTY_KR = { title: '', description: '', unit: '%', initial_metric: 0, target_metric: 100, weight: 100, status: 'non_iniziato' as const };
@@ -113,7 +114,7 @@ export function OkrForm() {
       noValidate
     >
       <h1 className="text-2xl font-bold text-gray-900">{isEdit ? t('okr.editTitle') : t('okr.new')}</h1>
-      {submitError && <p role="alert" className="text-danger-500 text-sm">{t(submitError)}</p>}
+      <ErrorNote errorKey={submitError} onReload={isEdit ? () => { setSubmitError(null); void queryClient.invalidateQueries({ queryKey: ["okr", orgId, id] }); } : undefined} />
 
       <section className="bg-white border border-gray-200 rounded-xl p-5 space-y-4">
         <h2 className="text-lg font-semibold text-gray-900">{t('okr.general')}</h2>
