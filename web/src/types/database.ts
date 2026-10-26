@@ -423,6 +423,20 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"platform_audit_logs": {
+                  Row: {
+                    "action": string,"actor_id": string | null,"created_at": string,"details": NonNullable<Json>,"id": string,"organization_id": string | null,"organization_slug": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "action": string,"actor_id"?: string | null,"created_at"?: string,"details"?: NonNullable<Json>,"id"?: string,"organization_id"?: string | null,"organization_slug"?: string | null
+                  }
+                  Update: {
+                    "action"?: string,"actor_id"?: string | null,"created_at"?: string,"details"?: NonNullable<Json>,"id"?: string,"organization_id"?: string | null,"organization_slug"?: string | null
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"profiles": {
                   Row: {
                     "created_at": string,"email": string | null,"first_name": string | null,"id": string,"last_name": string | null,"locale": string,"updated_at": string
