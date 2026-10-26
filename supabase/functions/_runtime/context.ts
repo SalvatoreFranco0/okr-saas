@@ -6,7 +6,7 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { buildAuditRow, type AdminAuditAction, type AdminAuditDetailsInput } from '../_shared/audit.ts';
 import { ApiError, safeErrorTag } from '../_shared/errors.ts';
-import { assertActiveOrgAdmin, type MembershipRow } from '../_shared/permissions.ts';
+import { isActiveOrgAdmin, type MembershipRow } from '../_shared/permissions.ts';
 import { assertRateLimit, RATE_LIMIT_MAX, RATE_LIMITED_ACTIONS, rateLimitWindowStart } from '../_shared/rateLimit.ts';
 import { mapApplyMemberError } from '../_shared/rpcErrors.ts';
 import type { OrgRole } from '../_shared/schemas.ts';
@@ -56,6 +56,11 @@ export async function getCaller(authorization: string, token: string): Promise<C
  * disattivata) la riga non c'e' e la risposta e' 403.
  */
 export async function requireOrgAdmin(caller: Caller, organizationId: string): Promise<void> {
+  if (!(await isOrgAdmin(caller, organizationId))) throw new ApiError('forbidden');
+}
+
+/** Come requireOrgAdmin, ma restituisce l'esito invece di lanciare (errore di lettura = false). */
+export async function isOrgAdmin(caller: Caller, organizationId: string): Promise<boolean> {
   const { data, error } = await caller.userClient
     .from('memberships')
     .select('organization_id, user_id, role, is_active')
@@ -64,9 +69,9 @@ export async function requireOrgAdmin(caller: Caller, organizationId: string): P
     .eq('is_active', true);
   if (error) {
     logSafe(`requireOrgAdmin: ${safeErrorTag(error)}`);
-    throw new ApiError('forbidden');
+    return false;
   }
-  assertActiveOrgAdmin(data as MembershipRow[] | null, organizationId, caller.id);
+  return isActiveOrgAdmin(data as MembershipRow[] | null, organizationId, caller.id);
 }
 
 export function serviceClient(): SupabaseClient {

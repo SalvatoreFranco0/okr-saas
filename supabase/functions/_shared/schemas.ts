@@ -66,6 +66,54 @@ export const removeMemberSchema = z.strictObject({
 });
 export type RemoveMemberInput = z.infer<typeof removeMemberSchema>;
 
+// ---------------------------------------------------------------------------
+// Funzioni di piattaforma (solo super-admin, tranne l'export)
+// ---------------------------------------------------------------------------
+
+/** Stesso vincolo di organizations.slug (0002). */
+export const SLUG_REGEX = /^[a-z0-9][a-z0-9-]{1,62}$/;
+
+export const createOrganizationSchema = z
+  .strictObject({
+    name: z.string().trim().min(1).max(200),
+    slug: z.string().trim().regex(SLUG_REGEX),
+    first_admin_email: emailSchema.optional(),
+    first_admin_first_name: optionalName,
+    first_admin_last_name: optionalName,
+  })
+  .refine(
+    (v) => v.first_admin_email !== undefined || (v.first_admin_first_name === undefined && v.first_admin_last_name === undefined),
+    { message: 'Nome e cognome del primo Admin richiedono first_admin_email.', path: ['first_admin_email'] },
+  );
+export type CreateOrganizationInput = z.infer<typeof createOrganizationSchema>;
+
+/** Durata massima di una sessione di supporto (vincolo support_sessions_max_4h). */
+export const SUPPORT_SESSION_MAX_MINUTES = 240;
+
+export const startSupportSessionSchema = z.strictObject({
+  organization_id: id,
+  reason: z.string().trim().min(10).max(500),
+  duration_minutes: z.int().min(1).max(SUPPORT_SESSION_MAX_MINUTES).default(SUPPORT_SESSION_MAX_MINUTES),
+});
+export type StartSupportSessionInput = z.infer<typeof startSupportSessionSchema>;
+
+export const endSupportSessionSchema = z.strictObject({
+  support_session_id: id,
+});
+export type EndSupportSessionInput = z.infer<typeof endSupportSessionSchema>;
+
+export const exportOrganizationSchema = z.strictObject({
+  organization_id: id,
+});
+export type ExportOrganizationInput = z.infer<typeof exportOrganizationSchema>;
+
+export const purgeOrganizationSchema = z.strictObject({
+  organization_id: id,
+  // Confrontato esattamente con lo slug: nessuna normalizzazione (deve essere digitato).
+  confirm_slug: z.string().min(1).max(63),
+});
+export type PurgeOrganizationInput = z.infer<typeof purgeOrganizationSchema>;
+
 /**
  * Valida il body; in caso di errore 400 `invalid_input` con i soli percorsi dei campi errati
  * (mai i valori: potrebbero contenere l'email).

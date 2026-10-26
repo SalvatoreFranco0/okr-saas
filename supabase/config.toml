@@ -432,3 +432,23 @@ import_map = "./functions/deno.json"
 [functions.admin-remove-member]
 verify_jwt = true
 import_map = "./functions/deno.json"
+
+[functions.admin-create-organization]
+verify_jwt = true
+import_map = "./functions/deno.json"
+
+[functions.admin-start-support-session]
+verify_jwt = true
+import_map = "./functions/deno.json"
+
+[functions.admin-end-support-session]
+verify_jwt = true
+import_map = "./functions/deno.json"
+
+[functions.admin-export-organization]
+verify_jwt = true
+import_map = "./functions/deno.json"
+
+[functions.admin-purge-organization]
+verify_jwt = true
+import_map = "./functions/deno.json"

@@ -13,6 +13,10 @@ export const ERROR_STATUS = {
   already_member: 409,
   already_accepted: 409,
   last_admin: 409,
+  slug_taken: 409,
+  confirmation_mismatch: 409,
+  export_required: 409,
+  export_too_large: 413,
   rate_limited: 429,
   internal: 500,
 } as const;
@@ -31,6 +35,10 @@ const DEFAULT_MESSAGES: Record<ErrorCode, string> = {
   already_member: 'L\'utente e\' gia\' membro attivo dell\'organizzazione.',
   already_accepted: 'L\'invito e\' gia\' stato accettato.',
   last_admin: 'L\'organizzazione deve avere almeno un Admin attivo.',
+  slug_taken: 'Lo slug e\' gia\' usato da un\'altra organizzazione.',
+  confirmation_mismatch: 'Lo slug di conferma non corrisponde a quello dell\'organizzazione.',
+  export_required: 'Serve un export dell\'organizzazione nelle ultime 24 ore prima della cancellazione.',
+  export_too_large: 'L\'organizzazione contiene troppi dati per un export in un\'unica risposta.',
   rate_limited: 'Troppe richieste: riprova piu\' tardi.',
   internal: 'Errore interno.',
 };
