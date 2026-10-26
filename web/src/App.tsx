@@ -14,6 +14,10 @@ import { OkrForm } from './pages/OkrForm';
 import { OkrDetail } from './pages/OkrDetail';
 import { UserManual } from './pages/UserManual';
 import { CAN_WRITE_OKR } from './hooks/useCurrentOrg';
+import { Periods } from './pages/admin/Periods';
+import { Locations } from './pages/admin/Locations';
+import { Teams } from './pages/admin/Teams';
+import { Users } from './pages/admin/Users';
 import { useAuthStore } from './stores/authStore';
 import { isLocale } from './i18n';
 
@@ -57,6 +61,10 @@ function App() {
               </RoleGuard>
             }
           />
+          <Route path="users" element={<RoleGuard roles={['admin']}><Users /></RoleGuard>} />
+          <Route path="periods" element={<RoleGuard roles={['admin', 'manager_okr']}><Periods /></RoleGuard>} />
+          <Route path="locations" element={<RoleGuard roles={['admin']}><Locations /></RoleGuard>} />
+          <Route path="teams" element={<RoleGuard roles={['admin', 'manager_okr']}><Teams /></RoleGuard>} />
           <Route path="manual" element={<UserManual />} />
         </Route>
       </Route>

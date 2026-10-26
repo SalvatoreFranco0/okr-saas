@@ -22,7 +22,11 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    /* I test in src/edge-functions importano i moduli puri di ../supabase/functions/_shared,
+       che usano `zod` come specificatore nudo: lo si risolve sul pacchetto di web. */
+    "paths": { "zod": ["./node_modules/zod"] }
   },
   "include": ["src"]
 }

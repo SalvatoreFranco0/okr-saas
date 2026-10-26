@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { canCreateOkr, canDeleteOkr, canEditOkr, canManageArchive, isReadOnlyBecauseClosed, type MyAccess, type OkrScope } from './permissions';
+import { canCreateOkr, canDeleteOkr, canEditOkr, canManageArchive, canManageSection, isReadOnlyBecauseClosed, type MyAccess, type OkrScope } from './permissions';
 
 const ME = 'u-me';
 const access = (role: MyAccess['role'], extra: Partial<MyAccess> = {}): MyAccess => ({
@@ -73,5 +73,24 @@ describe('eliminazione, archivio e sola lettura', () => {
     expect(isReadOnlyBecauseClosed(access('viewer'), true)).toBe(true);
     expect(isReadOnlyBecauseClosed(access('admin'), true)).toBe(false);
     expect(isReadOnlyBecauseClosed(access('team_lead'), false)).toBe(false);
+  });
+});
+
+describe('canManageSection', () => {
+  it('periodi e team: Admin e Manager', () => {
+    for (const s of ['periods', 'teams'] as const) {
+      expect(canManageSection('admin', s)).toBe(true);
+      expect(canManageSection('manager_okr', s)).toBe(true);
+      expect(canManageSection('team_lead', s)).toBe(false);
+      expect(canManageSection('viewer', s)).toBe(false);
+      expect(canManageSection(null, s)).toBe(false);
+    }
+  });
+  it('sedi e utenti: solo Admin', () => {
+    for (const s of ['locations', 'users'] as const) {
+      expect(canManageSection('admin', s)).toBe(true);
+      expect(canManageSection('manager_okr', s)).toBe(false);
+      expect(canManageSection('viewer', s)).toBe(false);
+    }
   });
 });

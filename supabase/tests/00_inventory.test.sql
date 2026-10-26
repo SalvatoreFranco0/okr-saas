@@ -3,7 +3,7 @@
 -- un grant o una tabella: e' il controllo richiesto dal "Fatto quando" della fase 3.
 -- Gira interamente come postgres: legge solo i cataloghi.
 begin;
-select plan(19);
+select plan(20);
 
 -- ---------------------------------------------------------------------------
 -- (a) Tabelle di public: elenco esatto e RLS abilitata E forzata su ognuna
@@ -219,8 +219,23 @@ select set_eq(
   $$ values ('kr_check_in', 'p_kr uuid, p_value numeric, p_note text'),
             ('dashboard_stats', 'p_org uuid, p_period uuid, p_location uuid, p_team uuid'),
             ('org_member_directory', 'p_org uuid'),
-            ('okr_create_with_krs', 'p_okr jsonb, p_krs jsonb') $$,
-  'inventario esatto delle funzioni di public (0004, 0007, 0008, 0010): una RPC nuova richiede di aggiornare i test'
+            ('okr_create_with_krs', 'p_okr jsonb, p_krs jsonb'),
+            ('admin_apply_member', 'p_org uuid, p_user uuid, p_role org_role, p_is_active boolean, p_location_ids uuid[], p_actor uuid') $$,
+  'inventario esatto delle funzioni di public (0004, 0007, 0008, 0010, 0011): una RPC nuova richiede di aggiornare i test'
+);
+
+-- admin_apply_member (0011): invoker, execute SOLO a service_role (mai ai client, nemmeno PUBLIC).
+select ok(
+  not (select prosecdef from pg_proc
+        where oid = 'public.admin_apply_member(uuid, uuid, public.org_role, boolean, uuid[], uuid)'::regprocedure)
+  and has_function_privilege('service_role', 'public.admin_apply_member(uuid, uuid, public.org_role, boolean, uuid[], uuid)', 'EXECUTE')
+  and not has_function_privilege('anon', 'public.admin_apply_member(uuid, uuid, public.org_role, boolean, uuid[], uuid)', 'EXECUTE')
+  and not has_function_privilege('authenticated', 'public.admin_apply_member(uuid, uuid, public.org_role, boolean, uuid[], uuid)', 'EXECUTE')
+  and not exists (select 1
+                    from pg_proc p, aclexplode(p.proacl) a
+                   where p.oid = 'public.admin_apply_member(uuid, uuid, public.org_role, boolean, uuid[], uuid)'::regprocedure
+                     and a.grantee = 0),
+  'admin_apply_member: invoker, eseguibile solo da service_role (ne'' anon, ne'' authenticated, ne'' PUBLIC)'
 );
 
 -- dashboard_stats (0010): una sola firma, invoker, execute solo ad authenticated.

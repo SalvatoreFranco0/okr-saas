@@ -1,7 +1,8 @@
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { LayoutDashboard, Target, BookOpen, ShieldCheck, X } from 'lucide-react';
+import { LayoutDashboard, Target, BookOpen, ShieldCheck, X, CalendarRange, MapPin, UsersRound, Users } from 'lucide-react';
 import { useCurrentOrg } from '../../hooks/useCurrentOrg';
+import { canManageSection } from '../../lib/permissions';
 
 interface SidebarProps {
   open: boolean;
@@ -10,12 +11,16 @@ interface SidebarProps {
 
 export function Sidebar({ open, onClose }: SidebarProps) {
   const { t } = useTranslation();
-  const { org } = useCurrentOrg();
+  const { org, role } = useCurrentOrg();
   const base = `/o/${org?.slug}`;
 
   const navItems = [
     { to: `${base}/dashboard`, label: t('nav.dashboard'), icon: LayoutDashboard },
     { to: `${base}/okrs`, label: t('nav.okrs'), icon: Target },
+    ...(canManageSection(role, 'users') ? [{ to: `${base}/users`, label: t('nav.users'), icon: Users }] : []),
+    ...(canManageSection(role, 'periods') ? [{ to: `${base}/periods`, label: t('nav.periods'), icon: CalendarRange }] : []),
+    ...(canManageSection(role, 'locations') ? [{ to: `${base}/locations`, label: t('nav.locations'), icon: MapPin }] : []),
+    ...(canManageSection(role, 'teams') ? [{ to: `${base}/teams`, label: t('nav.teams'), icon: UsersRound }] : []),
     { to: `${base}/manual`, label: t('nav.manual'), icon: BookOpen },
     { to: '/security', label: t('nav.security'), icon: ShieldCheck },
   ];

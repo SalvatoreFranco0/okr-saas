@@ -1,6 +1,56 @@
 {
   "app": { "name": "OKR Manager", "loading": "Caricamento...", "save": "Salva", "cancel": "Annulla", "back": "Indietro", "create": "Crea", "actions": "Azioni" },
-  "nav": { "dashboard": "Dashboard", "okrs": "OKR", "users": "Utenti", "manual": "Manuale", "profile": "Profilo", "security": "Sicurezza", "logout": "Esci", "organization": "Organizzazione" },
+  "admin": {
+    "name": "Nome",
+    "state": "Stato",
+    "add": "Aggiungi",
+    "active": "Attivo",
+    "inactive": "Disattivato",
+    "activate": "Riattiva",
+    "deactivate": "Disattiva",
+    "periods": {
+      "title": "Periodi",
+      "help": "I periodi raggruppano gli OKR (es. trimestri). Un periodo chiuso blocca le modifiche ai Team Lead.",
+      "range": "Intervallo",
+      "open": "Aperto",
+      "closed": "Chiuso",
+      "close": "Chiudi",
+      "reopen": "Riapri"
+    },
+    "locations": {
+      "title": "Sedi",
+      "help": "Le sedi non si eliminano: si disattivano.",
+      "address": "Indirizzo"
+    },
+    "users": {
+      "title": "Utenti",
+      "help": "Invita nuovi utenti, cambia ruolo e sedi, disattiva gli accessi. Chi è già registrato in un'altra organizzazione viene aggiunto senza un nuovo invito.",
+      "invite": "Invita un utente",
+      "sendInvite": "Invia invito",
+      "lastName": "Cognome",
+      "locations": "Sedi",
+      "resend": "Reinvia invito",
+      "editTitle": "Modifica {{name}}",
+      "selfRole": "Non puoi modificare il tuo ruolo né disattivare il tuo accesso.",
+      "result": {
+        "invited": "Invito inviato. L'utente riceverà un'email per impostare la password.",
+        "added": "Utente già registrato: aggiunto all'organizzazione.",
+        "reactivated": "Accesso riattivato.",
+        "resent": "Invito reinviato.",
+        "updated": "Modifiche salvate."
+      }
+    },
+    "teams": {
+      "title": "Team",
+      "help": "I team non si eliminano: si disattivano. Assegna i membri con il pulsante Membri.",
+      "description": "Descrizione",
+      "members": "Membri",
+      "membersOf": "Membri di {{name}}",
+      "noMembers": "Nessun membro assegnato.",
+      "addMember": "Aggiungi membro"
+    }
+  },
+  "nav": { "periods": "Periodi", "locations": "Sedi", "teams": "Team", "dashboard": "Dashboard", "okrs": "OKR", "users": "Utenti", "manual": "Manuale", "profile": "Profilo", "security": "Sicurezza", "logout": "Esci", "organization": "Organizzazione" },
   "roles": { "admin": "Amministratore", "manager_okr": "Manager OKR", "team_lead": "Team Lead", "viewer": "Viewer" },
   "okrStatus": { "in_pianificazione": "In pianificazione", "attivo": "Attivo", "in_pausa": "In pausa", "completato": "Completato", "non_raggiunto": "Non raggiunto" },
   "krStatus": { "non_iniziato": "Non iniziato", "in_progresso": "In progresso", "on_track": "In linea", "at_risk": "A rischio", "completato": "Completato" },
@@ -294,6 +344,7 @@
   },
   "validation": {
     "required": "Campo obbligatorio",
+    "email": "Indirizzo email non valido",
     "tooLong": "Testo troppo lungo",
     "number": "Inserisci un numero",
     "targetDiffers": "Obiettivo e valore iniziale devono essere diversi",
@@ -301,6 +352,18 @@
     "dateOrder": "La data di fine non può precedere quella di inizio"
   },
   "errors": {
+    "fn": {
+      "unauthorized": "Sessione scaduta: accedi di nuovo.",
+      "forbidden": "Non hai i permessi per questa operazione.",
+      "not_found": "Utente o organizzazione non trovati.",
+      "already_member": "Questa persona fa già parte dell'organizzazione.",
+      "already_accepted": "L'invito è già stato accettato: non serve reinviarlo.",
+      "last_admin": "Deve restare almeno un Amministratore attivo.",
+      "self_change": "Non puoi modificare il tuo ruolo né disattivare il tuo accesso.",
+      "rate_limited": "Hai raggiunto il limite di inviti per quest'ora. Riprova più tardi.",
+      "invalid_input": "Dati non validi: controlla i campi.",
+      "invalid_reference": "Una sede o un utente indicato non è valido per questa organizzazione."
+    },
     "generic": "Si è verificato un errore. Riprova.",
     "forbidden": "Non hai i permessi per questa operazione.",
     "conflict": "Il dato è già stato modificato da qualcun altro o non è più modificabile. Ricarica e riprova.",
