@@ -8,8 +8,10 @@ import { FullPageMessage } from '../components/auth/ProtectedRoute';
 export function RootRedirect() {
   const { t } = useTranslation();
   const orgs = useAuthStore((s) => s.orgs);
+  const isPlatformAdmin = useAuthStore((s) => s.isPlatformAdmin);
   const signOut = useAuthStore((s) => s.signOut);
 
+  if (orgs.length === 0 && isPlatformAdmin) return <Navigate to="/platform" replace />;
   if (orgs.length === 0) {
     return (
       <FullPageMessage>

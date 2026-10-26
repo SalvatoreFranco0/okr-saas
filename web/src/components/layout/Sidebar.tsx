@@ -1,8 +1,9 @@
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { LayoutDashboard, Target, BookOpen, ShieldCheck, X, CalendarRange, MapPin, UsersRound, Users } from 'lucide-react';
+import { LayoutDashboard, Target, BookOpen, ShieldCheck, Building2, X, CalendarRange, MapPin, UsersRound, Users } from 'lucide-react';
 import { useCurrentOrg } from '../../hooks/useCurrentOrg';
 import { canManageSection } from '../../lib/permissions';
+import { useAuthStore } from '../../stores/authStore';
 
 interface SidebarProps {
   open: boolean;
@@ -12,6 +13,7 @@ interface SidebarProps {
 export function Sidebar({ open, onClose }: SidebarProps) {
   const { t } = useTranslation();
   const { org, role } = useCurrentOrg();
+  const isPlatformAdmin = useAuthStore((s) => s.isPlatformAdmin);
   const base = `/o/${org?.slug}`;
 
   const navItems = [
@@ -22,6 +24,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
     ...(canManageSection(role, 'locations') ? [{ to: `${base}/locations`, label: t('nav.locations'), icon: MapPin }] : []),
     ...(canManageSection(role, 'teams') ? [{ to: `${base}/teams`, label: t('nav.teams'), icon: UsersRound }] : []),
     { to: `${base}/manual`, label: t('nav.manual'), icon: BookOpen },
+    ...(isPlatformAdmin ? [{ to: '/platform', label: t('nav.platform'), icon: Building2 }] : []),
     { to: '/security', label: t('nav.security'), icon: ShieldCheck },
   ];
 

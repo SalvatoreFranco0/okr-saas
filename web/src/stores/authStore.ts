@@ -11,6 +11,8 @@ export interface OrgMembership {
   name: string;
   slug: string;
   role: OrgRole;
+  /** Presente solo per un'organizzazione aperta con una sessione di supporto attiva (super-admin, aal2). */
+  support?: { sessionId: string; expiresAt: string };
 }
 export type Aal = 'aal1' | 'aal2';
 
@@ -44,12 +46,22 @@ async function loadUserData(session: Session) {
   ]);
 
   const memberships = membershipsRes.data ?? [];
-  const ids = memberships.map((m) => m.organization_id);
+  // Sessioni di supporto attive: la RLS le mostra solo al super-admin con aal2. Durante la sessione l'accesso
+  // all'organizzazione è quello di un Manager OKR (private.my_access), anche se l'utente ha una membership.
+  const nowIso = new Date().toISOString();
+  const supportRows = platformRes.data
+    ? ((await supabase.from('support_sessions').select('id, organization_id, expires_at').is('ended_at', null).gt('expires_at', nowIso).lte('started_at', nowIso)).data ?? [])
+    : [];
+  const ids = [...new Set([...memberships.map((m) => m.organization_id), ...supportRows.map((r) => r.organization_id)])];
   const orgRows = ids.length
     ? ((await supabase.from('organizations').select('id, name, slug').in('id', ids).eq('is_active', true)).data ?? [])
     : [];
   const orgs: OrgMembership[] = orgRows
-    .map((o) => ({ ...o, role: memberships.find((m) => m.organization_id === o.id)!.role }))
+    .map((o): OrgMembership => {
+      const sup = supportRows.find((r) => r.organization_id === o.id);
+      if (sup) return { ...o, role: 'manager_okr', support: { sessionId: sup.id, expiresAt: sup.expires_at } };
+      return { ...o, role: memberships.find((m) => m.organization_id === o.id)!.role };
+    })
     .sort((a, b) => a.name.localeCompare(b.name));
 
   return {
