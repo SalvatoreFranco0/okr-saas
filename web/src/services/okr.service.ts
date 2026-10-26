@@ -32,8 +32,9 @@ export type OkrListRow = Pick<
   | 'location_id' | 'team_id' | 'version' | 'deleted_at' | 'updated_at'
 >;
 
-export async function listOkrs(orgId: string, f: OkrFilters): Promise<{ rows: OkrListRow[]; total: number }> {
-  let q = supabase.from('okrs').select(LIST_COLUMNS, { count: 'exact' }).eq('organization_id', orgId);
+/** Query base con i filtri della lista (condivisa da lista ed export CSV). Il chiamante aggiunge ordine e intervallo. */
+export function filteredOkrQuery<C extends string>(orgId: string, f: OkrFilters, columns: C) {
+  let q = supabase.from('okrs').select(columns, { count: 'exact' }).eq('organization_id', orgId);
   q = f.archived ? q.not('deleted_at', 'is', null) : q.is('deleted_at', null);
   if (f.status) q = q.eq('status', f.status);
   if (f.priority) q = q.eq('priority', f.priority);
@@ -43,6 +44,11 @@ export async function listOkrs(orgId: string, f: OkrFilters): Promise<{ rows: Ok
   if (f.teamId) q = q.eq('team_id', f.teamId);
   const s = f.search ? sanitizeSearch(f.search) : '';
   if (s) q = q.or(`title.ilike.*${s}*,description.ilike.*${s}*`);
+  return q;
+}
+
+export async function listOkrs(orgId: string, f: OkrFilters): Promise<{ rows: OkrListRow[]; total: number }> {
+  const q = filteredOkrQuery(orgId, f, LIST_COLUMNS);
   const from = (f.page - 1) * f.pageSize;
   const { data, error, count } = await q.order('updated_at', { ascending: false }).range(from, from + f.pageSize - 1);
   if (error) throw error;
