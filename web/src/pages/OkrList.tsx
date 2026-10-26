@@ -12,6 +12,7 @@ import { errorKey } from '../lib/errors';
 import { OKR_STATUSES, PRIORITIES } from '../schemas/okr';
 import { PriorityBadge, ProgressBar, StatusBadge } from '../components/okr/badges';
 import { ConfirmDialog } from '../components/ConfirmDialog';
+import { ExportCsvButton } from '../components/okr/ExportCsvButton';
 import { Banner, btnPrimary, inputCls } from '../components/ui/Field';
 
 const PAGE_SIZE = 10;
@@ -80,7 +81,14 @@ export function OkrList({ archived = false }: { archived?: boolean }) {
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h1 className="text-2xl font-bold text-gray-900">{archived ? t('okr.archiveTitle') : t('okr.listTitle')}</h1>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-start">
+          <ExportCsvButton
+            orgId={orgId}
+            filters={filters}
+            periods={periodsQ.data ?? []}
+            locations={locationsQ.data ?? []}
+            teams={teamsQ.data ?? []}
+          />
           {!archived && canManageArchive(access) && (
             <Link to={`${base}/archive`} className="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50">
               {t('okr.archive')}
