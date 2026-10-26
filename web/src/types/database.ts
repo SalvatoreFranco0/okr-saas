@@ -624,7 +624,7 @@ isOneToOne: false
           }
           Functions: {
             "dashboard_stats":
-{ Args: { "p_org": string,"p_period"?: string }; Returns: Json
+{ Args: { "p_location"?: string,"p_org": string,"p_period"?: string,"p_team"?: string }; Returns: Json
                            },
 "kr_check_in":
 { Args: { "p_kr": string,"p_note"?: string,"p_value": number }; Returns: {
