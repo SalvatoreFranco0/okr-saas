@@ -1,6 +1,38 @@
 {
   "app": { "name": "OKR Manager", "loading": "Caricamento...", "save": "Salva", "cancel": "Annulla", "back": "Indietro", "create": "Crea", "actions": "Azioni" },
-  "nav": { "dashboard": "Dashboard", "okrs": "OKR", "users": "Utenti", "manual": "Manuale", "profile": "Profilo", "security": "Sicurezza", "logout": "Esci", "organization": "Organizzazione" },
+  "admin": {
+    "name": "Nome",
+    "state": "Stato",
+    "add": "Aggiungi",
+    "active": "Attivo",
+    "inactive": "Disattivato",
+    "activate": "Riattiva",
+    "deactivate": "Disattiva",
+    "periods": {
+      "title": "Periodi",
+      "help": "I periodi raggruppano gli OKR (es. trimestri). Un periodo chiuso blocca le modifiche ai Team Lead.",
+      "range": "Intervallo",
+      "open": "Aperto",
+      "closed": "Chiuso",
+      "close": "Chiudi",
+      "reopen": "Riapri"
+    },
+    "locations": {
+      "title": "Sedi",
+      "help": "Le sedi non si eliminano: si disattivano.",
+      "address": "Indirizzo"
+    },
+    "teams": {
+      "title": "Team",
+      "help": "I team non si eliminano: si disattivano. Assegna i membri con il pulsante Membri.",
+      "description": "Descrizione",
+      "members": "Membri",
+      "membersOf": "Membri di {{name}}",
+      "noMembers": "Nessun membro assegnato.",
+      "addMember": "Aggiungi membro"
+    }
+  },
+  "nav": { "periods": "Periodi", "locations": "Sedi", "teams": "Team", "dashboard": "Dashboard", "okrs": "OKR", "users": "Utenti", "manual": "Manuale", "profile": "Profilo", "security": "Sicurezza", "logout": "Esci", "organization": "Organizzazione" },
   "roles": { "admin": "Amministratore", "manager_okr": "Manager OKR", "team_lead": "Team Lead", "viewer": "Viewer" },
   "okrStatus": { "in_pianificazione": "In pianificazione", "attivo": "Attivo", "in_pausa": "In pausa", "completato": "Completato", "non_raggiunto": "Non raggiunto" },
   "krStatus": { "non_iniziato": "Non iniziato", "in_progresso": "In progresso", "on_track": "In linea", "at_risk": "A rischio", "completato": "Completato" },

@@ -50,3 +50,12 @@ export function canDeleteOkr(a: MyAccess): boolean {
 export function isReadOnlyBecauseClosed(a: MyAccess, periodClosed: boolean): boolean {
   return periodClosed && !isAdminLike(a.role);
 }
+
+// --- Amministrazione (Fase 7). Solo UX: le scritture le decide la RLS o le Edge Functions. ---
+export type AdminSection = 'periods' | 'locations' | 'teams' | 'users';
+
+/** Periodi e team: Admin e Manager. Sedi e utenti: solo Admin (policy RLS 0005 e Edge Functions). */
+export function canManageSection(role: OrgRole | null, section: AdminSection): boolean {
+  if (section === 'periods' || section === 'teams') return isAdminLike(role);
+  return role === 'admin';
+}

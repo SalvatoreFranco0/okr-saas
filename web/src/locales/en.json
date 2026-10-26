@@ -1,6 +1,38 @@
 {
   "app": { "name": "OKR Manager", "loading": "Loading...", "save": "Save", "cancel": "Cancel", "back": "Back", "create": "Create", "actions": "Actions" },
-  "nav": { "dashboard": "Dashboard", "okrs": "OKRs", "users": "Users", "manual": "Manual", "profile": "Profile", "security": "Security", "logout": "Sign out", "organization": "Organization" },
+  "admin": {
+    "name": "Name",
+    "state": "Status",
+    "add": "Add",
+    "active": "Active",
+    "inactive": "Inactive",
+    "activate": "Reactivate",
+    "deactivate": "Deactivate",
+    "periods": {
+      "title": "Periods",
+      "help": "Periods group OKRs (e.g. quarters). A closed period blocks edits by Team Leads.",
+      "range": "Range",
+      "open": "Open",
+      "closed": "Closed",
+      "close": "Close",
+      "reopen": "Reopen"
+    },
+    "locations": {
+      "title": "Locations",
+      "help": "Locations are never deleted: they are deactivated.",
+      "address": "Address"
+    },
+    "teams": {
+      "title": "Teams",
+      "help": "Teams are never deleted: they are deactivated. Assign members with the Members button.",
+      "description": "Description",
+      "members": "Members",
+      "membersOf": "Members of {{name}}",
+      "noMembers": "No members assigned.",
+      "addMember": "Add member"
+    }
+  },
+  "nav": { "periods": "Periods", "locations": "Locations", "teams": "Teams", "dashboard": "Dashboard", "okrs": "OKRs", "users": "Users", "manual": "Manual", "profile": "Profile", "security": "Security", "logout": "Sign out", "organization": "Organization" },
   "roles": { "admin": "Administrator", "manager_okr": "OKR Manager", "team_lead": "Team Lead", "viewer": "Viewer" },
   "okrStatus": { "in_pianificazione": "Planning", "attivo": "Active", "in_pausa": "Paused", "completato": "Completed", "non_raggiunto": "Not achieved" },
   "krStatus": { "non_iniziato": "Not started", "in_progresso": "In progress", "on_track": "On track", "at_risk": "At risk", "completato": "Completed" },
