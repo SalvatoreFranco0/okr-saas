@@ -3,7 +3,7 @@
 -- un grant o una tabella: e' il controllo richiesto dal "Fatto quando" della fase 3.
 -- Gira interamente come postgres: legge solo i cataloghi.
 begin;
-select plan(20);
+select plan(22);
 
 -- ---------------------------------------------------------------------------
 -- (a) Tabelle di public: elenco esatto e RLS abilitata E forzata su ognuna
@@ -28,12 +28,13 @@ select set_eq(
   $$ values ('organizations'), ('platform_admins'), ('support_sessions'), ('profiles'),
             ('periods'), ('locations'), ('teams'), ('memberships'), ('membership_locations'),
             ('team_members'), ('okrs'), ('key_results'), ('actions'), ('okr_alignments'),
-            ('okr_progress_history'), ('key_result_updates'), ('comments'), ('audit_logs') $$,
-  'inventario delle tabelle di public (18): una tabella nuova richiede di aggiornare i test'
+            ('okr_progress_history'), ('key_result_updates'), ('comments'), ('audit_logs'),
+            ('platform_audit_logs') $$,
+  'inventario delle tabelle di public (19): una tabella nuova richiede di aggiornare i test'
 );
 
 -- ---------------------------------------------------------------------------
--- (b) Privilegi di anon e authenticated (migrazioni 0005, 0006, 0007)
+-- (b) Privilegi di anon e authenticated (migrazioni 0005, 0006, 0007, 0012)
 -- ---------------------------------------------------------------------------
 -- has_table_privilege e non information_schema: quest'ultimo mostra solo i grant visibili
 -- al ruolo corrente.
@@ -87,10 +88,11 @@ select set_eq(
        ('key_result_updates', 'SELECT'),
        ('comments', 'SELECT'), ('comments', 'INSERT'), ('comments', 'DELETE'),
        ('audit_logs', 'SELECT'),
+       ('platform_audit_logs', 'SELECT'),
        ('v_okr_summary', 'SELECT'),
        ('v_okr_at_risk', 'SELECT'),
        ('v_org_members', 'SELECT') $$,
-  'authenticated ha esattamente i privilegi di tabella concessi da 0005/0006/0007'
+  'authenticated ha esattamente i privilegi di tabella concessi da 0005/0006/0007/0012'
 );
 
 -- Privilegi SOLO di colonna (senza il corrispondente privilegio di tabella).
@@ -132,6 +134,22 @@ select ok(
   not has_table_privilege('authenticated', 'public.audit_logs', 'INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER')
   and not has_any_column_privilege('authenticated', 'public.audit_logs', 'INSERT, UPDATE, REFERENCES'),
   'audit_logs: authenticated non ha alcun privilegio di scrittura'
+);
+select ok(
+  not has_table_privilege('authenticated', 'public.platform_audit_logs', 'INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER')
+  and not has_any_column_privilege('authenticated', 'public.platform_audit_logs', 'INSERT, UPDATE, REFERENCES'),
+  'platform_audit_logs: authenticated non ha alcun privilegio di scrittura'
+);
+
+-- platform_audit_logs (0012): service_role ha SOLO select e insert (append-only anche per il
+-- backend; i default privileges di Supabase gli concederebbero ALL).
+select set_eq(
+  $$ select p.priv
+       from (values ('SELECT'), ('INSERT'), ('UPDATE'), ('DELETE'),
+                    ('TRUNCATE'), ('REFERENCES'), ('TRIGGER')) as p (priv)
+      where has_table_privilege('service_role', 'public.platform_audit_logs', p.priv) $$,
+  $$ values ('SELECT'), ('INSERT') $$,
+  'platform_audit_logs: service_role ha esattamente SELECT e INSERT'
 );
 
 -- ---------------------------------------------------------------------------
@@ -183,8 +201,9 @@ select set_eq(
        ('comments',             'comments_insert',             'INSERT'),
        ('comments',             'comments_update_own',         'UPDATE'),
        ('comments',             'comments_delete',             'DELETE'),
-       ('audit_logs',           'audit_logs_select',           'SELECT') $$,
-  'inventario esatto delle 42 policy di public (nessuna mancante, nessuna inattesa)'
+       ('audit_logs',           'audit_logs_select',           'SELECT'),
+       ('platform_audit_logs',  'platform_audit_logs_select',  'SELECT') $$,
+  'inventario esatto delle 43 policy di public (nessuna mancante, nessuna inattesa)'
 );
 
 select is_empty(
