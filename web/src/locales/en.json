@@ -22,6 +22,24 @@
       "help": "Locations are never deleted: they are deactivated.",
       "address": "Address"
     },
+    "users": {
+      "title": "Users",
+      "help": "Invite new users, change role and locations, deactivate access. Users already registered in another organization are added without a new invitation.",
+      "invite": "Invite a user",
+      "sendInvite": "Send invitation",
+      "lastName": "Last name",
+      "locations": "Locations",
+      "resend": "Resend invitation",
+      "editTitle": "Edit {{name}}",
+      "selfRole": "You cannot change your own role or deactivate your own access.",
+      "result": {
+        "invited": "Invitation sent. The user will receive an email to set a password.",
+        "added": "User already registered: added to the organization.",
+        "reactivated": "Access reactivated.",
+        "resent": "Invitation resent.",
+        "updated": "Changes saved."
+      }
+    },
     "teams": {
       "title": "Teams",
       "help": "Teams are never deleted: they are deactivated. Assign members with the Members button.",
