@@ -625,7 +625,7 @@ isOneToOne: false
           Functions: {
             "admin_apply_member":
 { Args: { "p_actor"?: string,"p_is_active": boolean,"p_location_ids"?: (string)[],"p_org": string,"p_role": Database["public"]['Enums']["org_role"],"p_user": string }; Returns: undefined
-                            },
+                           },
 "dashboard_stats":
 { Args: { "p_location"?: string,"p_org": string,"p_period"?: string,"p_team"?: string }; Returns: Json
                            },
