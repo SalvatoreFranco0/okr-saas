@@ -3,7 +3,7 @@
 -- un grant o una tabella: e' il controllo richiesto dal "Fatto quando" della fase 3.
 -- Gira interamente come postgres: legge solo i cataloghi.
 begin;
-select plan(18);
+select plan(19);
 
 -- ---------------------------------------------------------------------------
 -- (a) Tabelle di public: elenco esatto e RLS abilitata E forzata su ognuna
@@ -217,10 +217,19 @@ select set_eq(
         and not exists (select 1 from pg_depend d
                          where d.classid = 'pg_proc'::regclass and d.objid = p.oid and d.deptype = 'e') $$,
   $$ values ('kr_check_in', 'p_kr uuid, p_value numeric, p_note text'),
-            ('dashboard_stats', 'p_org uuid, p_period uuid'),
+            ('dashboard_stats', 'p_org uuid, p_period uuid, p_location uuid, p_team uuid'),
             ('org_member_directory', 'p_org uuid'),
             ('okr_create_with_krs', 'p_okr jsonb, p_krs jsonb') $$,
-  'inventario esatto delle funzioni di public (0004, 0007, 0008): una RPC nuova richiede di aggiornare i test'
+  'inventario esatto delle funzioni di public (0004, 0007, 0008, 0010): una RPC nuova richiede di aggiornare i test'
+);
+
+-- dashboard_stats (0010): una sola firma, invoker, execute solo ad authenticated.
+select ok(
+  to_regprocedure('public.dashboard_stats(uuid, uuid)') is null
+  and not (select prosecdef from pg_proc where oid = 'public.dashboard_stats(uuid, uuid, uuid, uuid)'::regprocedure)
+  and has_function_privilege('authenticated', 'public.dashboard_stats(uuid, uuid, uuid, uuid)', 'EXECUTE')
+  and not has_function_privilege('anon', 'public.dashboard_stats(uuid, uuid, uuid, uuid)', 'EXECUTE'),
+  'dashboard_stats: vecchia firma (uuid, uuid) assente, nuova invoker ed eseguibile solo da authenticated'
 );
 
 -- La rubrica legge memberships/profiles bypassando la RLS: deve stare in private, essere
