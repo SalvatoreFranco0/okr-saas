@@ -18,6 +18,7 @@ import { Periods } from './pages/admin/Periods';
 import { Locations } from './pages/admin/Locations';
 import { Teams } from './pages/admin/Teams';
 import { Users } from './pages/admin/Users';
+import { Platform } from './pages/Platform';
 import { useAuthStore } from './stores/authStore';
 import { isLocale } from './i18n';
 
@@ -39,6 +40,7 @@ function App() {
       <Route element={<ProtectedRoute />}>
         <Route path="/" element={<RootRedirect />} />
         <Route path="/security" element={<Security />} />
+        <Route path="/platform" element={<Platform />} />
         <Route path="/o/:orgSlug" element={<AppLayout />}>
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />

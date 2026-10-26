@@ -1,5 +1,32 @@
 {
   "app": { "name": "OKR Manager", "loading": "Caricamento...", "save": "Salva", "cancel": "Annulla", "back": "Indietro", "create": "Crea", "actions": "Azioni" },
+  "platform": {
+    "title": "Piattaforma",
+    "help": "Gestione delle organizzazioni. Per vedere o modificare i dati di un cliente serve una sessione di supporto (massimo 4 ore), che viene registrata e resta visibile agli Amministratori dell'organizzazione.",
+    "backToApp": "Torna all'app",
+    "newOrg": "Nuova organizzazione",
+    "slug": "Identificativo (slug)",
+    "firstAdmin": "Email del primo Amministratore (facoltativa)",
+    "create": "Crea organizzazione",
+    "created": "Organizzazione creata con il periodo del trimestre corrente.",
+    "startSession": "Avvia sessione di supporto",
+    "startSessionFor": "Sessione di supporto su {{name}}",
+    "sessionHelp": "Indica il motivo (almeno 10 caratteri). Resta nel registro di piattaforma.",
+    "reason": "Motivazione",
+    "sessionStarted": "Sessione di supporto avviata (massimo 4 ore).",
+    "sessionEnded": "Sessione di supporto terminata.",
+    "supportUntil": "Supporto fino alle {{time}}",
+    "banner": "Sessione di supporto attiva su {{name}} fino alle {{time}}",
+    "endSession": "Termina sessione",
+    "open": "Apri",
+    "export": "Esporta dati",
+    "exported": "Esportazione completata: il file JSON è stato scaricato.",
+    "purge": "Elimina definitivamente",
+    "purgeTitle": "Eliminare definitivamente {{name}}?",
+    "purgeWarning": "L'operazione cancella tutti i dati dell'organizzazione e non si può annullare. Servono una sessione di supporto attiva e un'esportazione fatta nelle ultime 24 ore. Gli account utente non vengono eliminati.",
+    "purgeType": "Per confermare scrivi: {{slug}}",
+    "purged": "Organizzazione eliminata. Utenti rimasti senza altre organizzazioni: {{count}}."
+  },
   "admin": {
     "name": "Nome",
     "state": "Stato",
@@ -50,7 +77,7 @@
       "addMember": "Aggiungi membro"
     }
   },
-  "nav": { "periods": "Periodi", "locations": "Sedi", "teams": "Team", "dashboard": "Dashboard", "okrs": "OKR", "users": "Utenti", "manual": "Manuale", "profile": "Profilo", "security": "Sicurezza", "logout": "Esci", "organization": "Organizzazione" },
+  "nav": { "platform": "Piattaforma", "periods": "Periodi", "locations": "Sedi", "teams": "Team", "dashboard": "Dashboard", "okrs": "OKR", "users": "Utenti", "manual": "Manuale", "profile": "Profilo", "security": "Sicurezza", "logout": "Esci", "organization": "Organizzazione" },
   "roles": { "admin": "Amministratore", "manager_okr": "Manager OKR", "team_lead": "Team Lead", "viewer": "Viewer" },
   "okrStatus": { "in_pianificazione": "In pianificazione", "attivo": "Attivo", "in_pausa": "In pausa", "completato": "Completato", "non_raggiunto": "Non raggiunto" },
   "krStatus": { "non_iniziato": "Non iniziato", "in_progresso": "In progresso", "on_track": "In linea", "at_risk": "A rischio", "completato": "Completato" },
@@ -343,6 +370,7 @@
     }
   },
   "validation": {
+    "slug": "Usa minuscole, numeri e trattini (2-63 caratteri)",
     "required": "Campo obbligatorio",
     "email": "Indirizzo email non valido",
     "tooLong": "Testo troppo lungo",
@@ -353,6 +381,10 @@
   },
   "errors": {
     "fn": {
+      "slug_taken": "Esiste già un'organizzazione con questo identificativo.",
+      "confirmation_mismatch": "Il testo di conferma non coincide con l'identificativo.",
+      "export_required": "Prima dell'eliminazione esporta i dati dell'organizzazione (valido 24 ore).",
+      "export_too_large": "L'organizzazione ha troppi dati per un'unica esportazione.",
       "unauthorized": "Sessione scaduta: accedi di nuovo.",
       "forbidden": "Non hai i permessi per questa operazione.",
       "not_found": "Utente o organizzazione non trovati.",

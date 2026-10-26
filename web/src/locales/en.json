@@ -1,5 +1,32 @@
 {
   "app": { "name": "OKR Manager", "loading": "Loading...", "save": "Save", "cancel": "Cancel", "back": "Back", "create": "Create", "actions": "Actions" },
+  "platform": {
+    "title": "Platform",
+    "help": "Organization management. Viewing or changing a customer's data requires a support session (4 hours at most), which is logged and visible to the organization's Administrators.",
+    "backToApp": "Back to the app",
+    "newOrg": "New organization",
+    "slug": "Identifier (slug)",
+    "firstAdmin": "First Administrator's email (optional)",
+    "create": "Create organization",
+    "created": "Organization created with the current quarter's period.",
+    "startSession": "Start support session",
+    "startSessionFor": "Support session on {{name}}",
+    "sessionHelp": "State the reason (at least 10 characters). It is kept in the platform log.",
+    "reason": "Reason",
+    "sessionStarted": "Support session started (4 hours at most).",
+    "sessionEnded": "Support session ended.",
+    "supportUntil": "Support until {{time}}",
+    "banner": "Support session active on {{name}} until {{time}}",
+    "endSession": "End session",
+    "open": "Open",
+    "export": "Export data",
+    "exported": "Export complete: the JSON file was downloaded.",
+    "purge": "Delete permanently",
+    "purgeTitle": "Permanently delete {{name}}?",
+    "purgeWarning": "This deletes all of the organization's data and cannot be undone. It needs an active support session and an export made in the last 24 hours. User accounts are not deleted.",
+    "purgeType": "To confirm, type: {{slug}}",
+    "purged": "Organization deleted. Users left without any other organization: {{count}}."
+  },
   "admin": {
     "name": "Name",
     "state": "Status",
@@ -50,7 +77,7 @@
       "addMember": "Add member"
     }
   },
-  "nav": { "periods": "Periods", "locations": "Locations", "teams": "Teams", "dashboard": "Dashboard", "okrs": "OKRs", "users": "Users", "manual": "Manual", "profile": "Profile", "security": "Security", "logout": "Sign out", "organization": "Organization" },
+  "nav": { "platform": "Platform", "periods": "Periods", "locations": "Locations", "teams": "Teams", "dashboard": "Dashboard", "okrs": "OKRs", "users": "Users", "manual": "Manual", "profile": "Profile", "security": "Security", "logout": "Sign out", "organization": "Organization" },
   "roles": { "admin": "Administrator", "manager_okr": "OKR Manager", "team_lead": "Team Lead", "viewer": "Viewer" },
   "okrStatus": { "in_pianificazione": "Planning", "attivo": "Active", "in_pausa": "Paused", "completato": "Completed", "non_raggiunto": "Not achieved" },
   "krStatus": { "non_iniziato": "Not started", "in_progresso": "In progress", "on_track": "On track", "at_risk": "At risk", "completato": "Completed" },

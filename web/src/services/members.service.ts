@@ -43,7 +43,8 @@ export class FunctionError extends Error {
 /** Codici noti delle funzioni admin → chiave i18n. Qualunque altro codice ricade su `errors.generic`. */
 const KNOWN = new Set([
   'unauthorized', 'forbidden', 'not_found', 'already_member', 'already_accepted', 'last_admin',
-  'self_change', 'rate_limited', 'invalid_input', 'invalid_reference',
+  'self_change', 'rate_limited', 'invalid_input', 'invalid_reference', 'slug_taken',
+  'confirmation_mismatch', 'export_required', 'export_too_large',
 ]);
 
 export function functionErrorKey(err: unknown): string | null {
@@ -51,7 +52,7 @@ export function functionErrorKey(err: unknown): string | null {
   return KNOWN.has(err.code) ? `errors.fn.${err.code}` : 'errors.generic';
 }
 
-async function invoke<T>(name: string, body: Record<string, unknown>): Promise<T> {
+export async function invoke<T>(name: string, body: Record<string, unknown>): Promise<T> {
   const { data, error } = await supabase.functions.invoke(name, { body });
   if (error) {
     if (error instanceof FunctionsHttpError) {
